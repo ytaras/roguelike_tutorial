@@ -26,3 +26,8 @@ jobs:
     - stage: coverage
       rust: nightly
       script: cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+stages:
+  - clippy
+  - test
+  - coverage
+  - bench

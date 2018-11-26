@@ -24,6 +24,7 @@ impl<'a, T: Component> System<'a> for AssertUnique<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use data::components::*;
 
     #[test]
     fn passes_if_unique() {
