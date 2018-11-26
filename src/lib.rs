@@ -1,5 +1,4 @@
 extern crate specs;
-#[macro_use]
 extern crate specs_derive;
 extern crate ansi_term;
 extern crate doryen_rs;
