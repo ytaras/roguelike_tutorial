@@ -13,21 +13,13 @@ before_cache: |
 cache: cargo
 before_script:
   - rustup component add clippy-preview
+script:
   - cargo clean
-jobs:
-  include:
-    - stage: "clippy"
-      script: cargo clippy --all-features
-    - stage: "test"
-      script: cargo test
-    - stage: bench
-      rust: nightly
-      script: cargo bench
-    - stage: coverage
-      rust: nightly
-      script: cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
-stages:
-  - clippy
-  - test
-  - coverage
-  - bench
+  - cargo clippy --all-features
+  - cargo test
+  - cargo build
+after_success: |
+  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
+    cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+    cargo bench
+  fi
