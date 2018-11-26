@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Yuriy Taras <ytaras@softserveinc.com>"]
 
 [dependencies]
+doryen-rs="*"
+specs="*"
+specs-derive="*"
+ansi_term="*"
 
 [badges]
 travis-ci = { repository = "ytaras/rogue_tutorial" }
