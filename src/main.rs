@@ -4,6 +4,7 @@ extern crate specs;
 
 use doryen_rs::{App, AppOptions};
 use rogue_tutorial::data::components::*;
+use rogue_tutorial::data::structures::*;
 use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::GameWorld;
 use specs::prelude::*;
@@ -15,6 +16,10 @@ fn main() {
     let mut world = World::new();
     world.register::<HasPos>();
     world.register::<IsVisible>();
+    world.add_resource(LevelInfo {
+        width: CONSOLE_WIDTH,
+        height: CONSOLE_HEIGHT,
+    });
 
     world
         .create_entity()
