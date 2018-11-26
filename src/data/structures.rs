@@ -8,7 +8,7 @@ pub struct LevelInfo {
 pub enum GameCommand {
     Exit,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ActorCommand {
     Move(Dir),
 }
@@ -57,13 +57,13 @@ const E: Dir = Dir {
     ew: MoveDir::Minus,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Dir {
     ns: MoveDir,
     ew: MoveDir,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum MoveDir {
     Minus,
     Zero,

@@ -17,6 +17,7 @@ fn main() {
     world.register::<HasPos>();
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
+    world.register::<PlansExecuting>();
     world.add_resource(LevelInfo {
         width: CONSOLE_WIDTH,
         height: CONSOLE_HEIGHT,

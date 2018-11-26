@@ -22,3 +22,8 @@ pub struct IsPlayer;
 
 #[derive(Component, Debug)]
 pub struct PlansExecuting(ActorCommand);
+impl PlansExecuting {
+    pub fn new(ac: ActorCommand) -> Self {
+        PlansExecuting(ac)
+    }
+}

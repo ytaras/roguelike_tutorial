@@ -1,6 +1,5 @@
 use specs::prelude::*;
 
-use data::components::*;
 use std::marker::PhantomData;
 
 pub struct AssertUnique<T: Component> {

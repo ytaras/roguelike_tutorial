@@ -52,11 +52,18 @@ impl GameCommandHandler {
             }
             Command::PlayerCommand(ac) => {
                 use specs::RunNow;
-                // TODO Extract command handling to logic
+                // TODO Extract command handling from UI layer
                 AssertUnique::<IsPlayer>::new().run_now(&mut world.res);
-                // TODO Extract exec to system
-
-                println!("{:?}", ac);
+                // TODO Extract exec to system or provide helper methods - to decide
+                let (e, ispl, mut pl): (
+                    Entities,
+                    ReadStorage<IsPlayer>,
+                    WriteStorage<PlansExecuting>,
+                ) = world.system_data();
+                use specs::Join;
+                for (e, _) in (&e, &ispl).join() {
+                    pl.insert(e, PlansExecuting::new(ac.to_owned())).unwrap();
+                }
             }
         }
     }
