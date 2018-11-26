@@ -42,11 +42,14 @@ impl Engine for GameWorld {
 pub struct GameCommandHandler;
 
 impl GameCommandHandler {
-    fn exec(&self, gc: &GameCommand) {
+    fn exec(&self, gc: &Command) {
         match gc {
-            GameCommand::Exit => {
+            Command::GameCommand(GameCommand::Exit) => {
                 use std::process::exit;
                 exit(0);
+            }
+            Command::PlayerCommand(PlayerCommand::Move(dir)) => {
+                println!("{:?}", dir);
             }
         }
     }
