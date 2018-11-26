@@ -4,3 +4,8 @@ version = "0.1.0"
 authors = ["Yuriy Taras <ytaras@softserveinc.com>"]
 
 [dependencies]
+
+[badges]
+travis-ci = { repository = "ytaras/rogue_tutorial" }
+coveralls = { repository = "ytaras/rogue_tutorial", service = "github" }
+maintenance = { status = "experimental" }
