@@ -1,3 +1,4 @@
+use super::structures::*;
 use specs::prelude::*;
 use specs_derive::*;
 
@@ -15,3 +16,9 @@ pub struct IsVisible {
     pub display_char: char,
     pub color: Color,
 }
+
+#[derive(Component, Debug)]
+pub struct IsPlayer;
+
+#[derive(Component, Debug)]
+pub struct PlansExecuting(ActorCommand);

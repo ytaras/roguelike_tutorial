@@ -18,6 +18,14 @@ script:
   - cargo clippy --all-features
   - cargo test
   - cargo build
+  - | if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
+    # Uncomment the following line for coveralls.io
+    cargo bench
+
+    # Uncomment the following two lines create and upload a report for codecov.io
+    # cargo tarpaulin --out Xml
+    # bash <(curl -s https://codecov.io/bash)
+  fi
 after_success: |
   if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
     # Uncomment the following line for coveralls.io

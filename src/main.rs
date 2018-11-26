@@ -16,6 +16,7 @@ fn main() {
     let mut world = World::new();
     world.register::<HasPos>();
     world.register::<IsVisible>();
+    world.register::<IsPlayer>();
     world.add_resource(LevelInfo {
         width: CONSOLE_WIDTH,
         height: CONSOLE_HEIGHT,
@@ -23,6 +24,7 @@ fn main() {
 
     world
         .create_entity()
+        .with(IsPlayer)
         .with(HasPos { x: 1, y: 10 })
         .with(IsVisible {
             color: RED,

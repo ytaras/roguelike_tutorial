@@ -1,8 +1,10 @@
 mod keymapper;
 use self::keymapper::*;
+use data::components::*;
 use data::structures::*;
 use doryen_rs::*;
 use specs::prelude::*;
+use systems::logic::*;
 use systems::render::render_doryen;
 
 pub struct GameWorld {
@@ -28,7 +30,7 @@ impl Engine for GameWorld {
         let input = _api.input();
         for (key, command) in self.key_mapper.commands() {
             if input.key_pressed(key) {
-                self.game_command_handler.exec(command);
+                self.game_command_handler.exec(command, &mut self.world);
             }
         }
     }
@@ -42,14 +44,19 @@ impl Engine for GameWorld {
 pub struct GameCommandHandler;
 
 impl GameCommandHandler {
-    fn exec(&self, gc: &Command) {
+    fn exec(&self, gc: &Command, world: &mut World) {
         match gc {
             Command::GameCommand(GameCommand::Exit) => {
                 use std::process::exit;
                 exit(0);
             }
-            Command::PlayerCommand(PlayerCommand::Move(dir)) => {
-                println!("{:?}", dir);
+            Command::PlayerCommand(ac) => {
+                use specs::RunNow;
+                // TODO Extract command handling to logic
+                AssertUnique::<IsPlayer>::new().run_now(&mut world.res);
+                // TODO Extract exec to system
+
+                println!("{:?}", ac);
             }
         }
     }

@@ -9,14 +9,14 @@ pub enum GameCommand {
     Exit,
 }
 #[derive(Debug)]
-pub enum PlayerCommand {
+pub enum ActorCommand {
     Move(Dir),
 }
 
 #[derive(Debug)]
 pub enum Command {
     GameCommand(GameCommand),
-    PlayerCommand(PlayerCommand),
+    PlayerCommand(ActorCommand),
 }
 
 impl Command {
@@ -24,7 +24,7 @@ impl Command {
         Command::GameCommand(GameCommand::Exit)
     }
     fn move_dir(dir: Dir) -> Command {
-        Command::PlayerCommand(PlayerCommand::Move(dir))
+        Command::PlayerCommand(ActorCommand::Move(dir))
     }
     pub fn west() -> Command {
         Command::move_dir(W)
