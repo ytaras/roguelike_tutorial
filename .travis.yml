@@ -6,9 +6,18 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
+before_cache: |
+  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
+    RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
+  fi
 before_script:
   - rustup component add clippy-preview
 script:
+  - cargo clean
   - cargo clippy --all-features
   - cargo test
   - cargo build
+after_success: |
+  if [[ "$TRAVIS_RUST_VERSION" == nightly]]; then
+    cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+  fi
