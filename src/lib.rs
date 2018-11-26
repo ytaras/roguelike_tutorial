@@ -8,6 +8,6 @@ mod tests {
 
     #[test]
     fn test_mock() {
-        assert_eq!("hello, world", from_lib());
+        assert_eq!("hello,world", from_lib());
     }
 }
