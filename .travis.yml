@@ -13,18 +13,16 @@ before_cache: |
 cache: cargo
 before_script:
   - rustup component add clippy-preview
-script:
   - cargo clean
-  - cargo clippy --all-features
-  - cargo test
-  - cargo build
-  - cargo  +nightly bench
-after_success: |
-  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
-    # Uncomment the following line for coveralls.io
-    cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
-
-    # Uncomment the following two lines create and upload a report for codecov.io
-    # cargo tarpaulin --out Xml
-    # bash <(curl -s https://codecov.io/bash)
-  fi
+jobs:
+  include:
+    - stage: "clippy"
+      script: cargo clippy --all-features
+    - stage: "test"
+      script: cargo test
+    - stage: bench
+      rust: nightly
+      script: cargo bench
+    - stage: coverage
+      rust: nightly
+      script: cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
