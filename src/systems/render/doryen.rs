@@ -16,7 +16,15 @@ impl<'a> System<'a> for DoryenRenderer<'a> {
     fn run(&mut self, (pos, vis, li): Self::SystemData) {
         use specs::Join;
         let con = self.doryen_api.con();
-        con.area(0, 0, li.width, li.height, None, None, Some('.' as u16));
+        con.area(
+            0,
+            0,
+            li.width,
+            li.height,
+            Some(WHITE),
+            None,
+            Some('.' as u16),
+        );
         for (pos, vis) in (&pos, &vis).join() {
             con.ascii(pos.x as i32, pos.y as i32, vis.display_char as u16);
             con.fore(pos.x as i32, pos.y as i32, vis.color);

@@ -18,6 +18,8 @@ impl<'a> std::ops::AddAssign<&'a Dir> for &'a mut HasPos {
 
 type Color = (u8, u8, u8, u8);
 pub const RED: Color = (255, 0, 0, 255);
+pub const WHITE: Color = (255, 255, 255, 255);
+pub const BLACK: Color = (0, 0, 0, 255);
 
 #[derive(Component, Debug)]
 pub struct IsVisible {
