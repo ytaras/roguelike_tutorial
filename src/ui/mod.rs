@@ -35,7 +35,7 @@ impl Engine for GameWorld {
             }
         }
         // TODO - Use dispatcher
-        ExecuteCommands.run_now(&mut self.world.res);
+        ExecuteCommands.run_now(&self.world.res);
         self.world.maintain();
     }
     fn render(&mut self, api: &mut DoryenApi) {
