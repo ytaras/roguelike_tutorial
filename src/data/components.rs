@@ -17,7 +17,7 @@ pub struct IsVisible {
     pub color: Color,
 }
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Default)]
 pub struct IsPlayer;
 
 #[derive(Component, Debug)]

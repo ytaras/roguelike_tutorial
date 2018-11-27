@@ -53,7 +53,8 @@ impl GameCommandHandler {
             Command::PlayerCommand(ac) => {
                 use specs::RunNow;
                 // TODO Extract command handling from UI layer
-                AssertUnique::<IsPlayer>::new().run_now(&mut world.res);
+                let mut system: AssertUnique<IsPlayer> = Default::default();
+                system.run_now(&world.res);
                 // TODO Extract exec to system or provide helper methods - to decide
                 let (e, ispl, mut pl): (
                     Entities,
