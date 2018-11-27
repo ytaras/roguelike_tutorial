@@ -1,5 +1,6 @@
+use data::components::*;
+use data::structures::*;
 use specs::prelude::*;
-
 use std::marker::PhantomData;
 
 #[derive(Default)]
@@ -14,41 +15,93 @@ impl<'a, T: Component> System<'a> for AssertUnique<T> {
         assert_eq!(1, data.join().count());
     }
 }
+
+pub struct ExecuteCommands;
+
+impl<'a> System<'a> for ExecuteCommands {
+    type SystemData = (
+        Entities<'a>,
+        WriteStorage<'a, HasPos>,
+        WriteStorage<'a, PlansExecuting>,
+        Read<'a, LazyUpdate>,
+    );
+    fn run(&mut self, (e, mut pos, mut plan_storage, lu): Self::SystemData) {
+        use specs::Join;
+
+        for (e, mut pos, plan) in (&e, &mut pos, &mut plan_storage).join() {
+            match plan.0 {
+                ActorCommand::Move(ref dir) => {
+                    pos += dir;
+                }
+            }
+            lu.remove::<PlansExecuting>(e);
+        }
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
-    use data::components::*;
 
-    fn assert_unique<T: Component + Default>(r: &mut Resources) {
-        let mut system: AssertUnique<T> = Default::default();
-        system.run_now(r);
+    mod assert_unique {
+        use super::*;
+
+        fn assert_unique<T: Component + Default>(r: &mut Resources) {
+            let mut system: AssertUnique<T> = Default::default();
+            system.run_now(r);
+        }
+
+        #[test]
+        fn passes_if_unique() {
+            let mut w = build_world();
+            w.create_entity().with(IsPlayer).build();
+            assert_unique::<IsPlayer>(&mut w.res);
+        }
+
+        #[test]
+        #[should_panic]
+        fn fail_on_missing() {
+            let mut w = build_world();
+            assert_unique::<IsPlayer>(&mut w.res);
+        }
+
+        #[test]
+        #[should_panic]
+        fn fail_on_many() {
+            let mut w = build_world();
+            w.create_entity().with(IsPlayer).build();
+            w.create_entity().with(IsPlayer).build();
+            assert_unique::<IsPlayer>(&mut w.res);
+        }
+        fn build_world() -> World {
+            let mut w = World::new();
+            w.register::<IsPlayer>();
+            w
+        }
     }
 
-    #[test]
-    fn passes_if_unique() {
-        let mut w = build_world();
-        w.create_entity().with(IsPlayer).build();
-        assert_unique::<IsPlayer>(&mut w.res);
-    }
+    mod execute_planned_commands {
+        use super::*;
+        #[test]
+        fn move_moves() {
+            let mut w = World::new();
+            w.register::<HasPos>();
+            w.register::<PlansExecuting>();
 
-    #[test]
-    #[should_panic]
-    fn fail_on_missing() {
-        let mut w = build_world();
-        assert_unique::<IsPlayer>(&mut w.res);
-    }
+            let e = w
+                .create_entity()
+                .with(HasPos { x: 1, y: 1 })
+                .with(PlansExecuting::new(ActorCommand::Move(S)))
+                .build();
 
-    #[test]
-    #[should_panic]
-    fn fail_on_many() {
-        let mut w = build_world();
-        w.create_entity().with(IsPlayer).build();
-        w.create_entity().with(IsPlayer).build();
-        assert_unique::<IsPlayer>(&mut w.res);
-    }
-    fn build_world() -> World {
-        let mut w = World::new();
-        w.register::<IsPlayer>();
-        w
+            ExecuteCommands.run_now(&w.res);
+
+            w.maintain();
+
+            assert_eq!(
+                w.read_storage::<HasPos>().get(e),
+                Some(&HasPos { x: 1, y: 2 })
+            );
+            assert_eq!(w.read_storage::<PlansExecuting>().get(e), None);
+        }
     }
 }

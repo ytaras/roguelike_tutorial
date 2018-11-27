@@ -1,3 +1,4 @@
+use std::convert::From;
 #[derive(Debug, Default)]
 pub struct LevelInfo {
     pub width: u32,
@@ -8,7 +9,7 @@ pub struct LevelInfo {
 pub enum GameCommand {
     Exit,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum ActorCommand {
     Move(Dir),
 }
@@ -40,32 +41,46 @@ impl Command {
     }
 }
 
-const N: Dir = Dir {
+// TODO - Better syntax
+pub const N: Dir = Dir {
     ns: MoveDir::Minus,
     ew: MoveDir::Zero,
 };
-const S: Dir = Dir {
+pub const S: Dir = Dir {
     ns: MoveDir::Plus,
     ew: MoveDir::Zero,
 };
-const W: Dir = Dir {
-    ns: MoveDir::Zero,
-    ew: MoveDir::Plus,
-};
-const E: Dir = Dir {
+pub const W: Dir = Dir {
     ns: MoveDir::Zero,
     ew: MoveDir::Minus,
 };
+pub const E: Dir = Dir {
+    ns: MoveDir::Zero,
+    ew: MoveDir::Plus,
+};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Dir {
-    ns: MoveDir,
-    ew: MoveDir,
+    pub ns: MoveDir,
+    pub ew: MoveDir,
 }
 
-#[derive(Debug, Clone)]
-enum MoveDir {
+#[derive(Debug, Clone, PartialEq)]
+pub enum MoveDir {
     Minus,
     Zero,
     Plus,
+}
+
+impl MoveDir {
+    pub fn to_int(&self) -> i8 {
+        self.to_num()
+    }
+    pub fn to_num<T: From<i8>>(&self) -> T {
+        match self {
+            MoveDir::Minus => T::from(-1),
+            MoveDir::Plus => T::from(1),
+            MoveDir::Zero => T::from(0),
+        }
+    }
 }

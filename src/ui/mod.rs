@@ -27,12 +27,16 @@ impl GameWorld {
 
 impl Engine for GameWorld {
     fn update(&mut self, _api: &mut DoryenApi) {
+        use specs::RunNow;
         let input = _api.input();
         for (key, command) in self.key_mapper.commands() {
             if input.key_pressed(key) {
                 self.game_command_handler.exec(command, &mut self.world);
             }
         }
+        // TODO - Use dispatcher
+        ExecuteCommands.run_now(&mut self.world.res);
+        self.world.maintain();
     }
     fn render(&mut self, api: &mut DoryenApi) {
         let mut renderer = render_doryen(api);
