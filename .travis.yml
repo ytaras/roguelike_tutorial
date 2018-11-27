@@ -14,7 +14,6 @@ cache: cargo
 before_script:
   - rustup component add clippy-preview
 script:
-  - cargo clean
   - cargo clippy --all-features
   - cargo test
   - cargo build
