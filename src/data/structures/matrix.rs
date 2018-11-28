@@ -77,6 +77,12 @@ impl<'a, T> IndexMut<&'a Pos> for Matrix<T> {
     }
 }
 
+impl<'a, T> IntoIterator for &'a Matrix<T> {
+    type Item = (Pos, &'a T);
+    type IntoIter = ::std::vec::IntoIter<Self::Item>;
+    fn into_iter(self) -> Self::IntoIter {}
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
