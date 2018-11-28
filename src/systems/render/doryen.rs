@@ -19,8 +19,8 @@ impl<'a> System<'a> for DoryenRenderer<'a> {
         con.area(
             0,
             0,
-            li.width,
-            li.height,
+            li.width().into(),
+            li.height().into(),
             Some(WHITE),
             None,
             Some('.' as u16),

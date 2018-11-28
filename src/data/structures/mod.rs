@@ -3,11 +3,7 @@ use std::convert::From;
 mod level_data;
 mod matrix;
 
-#[derive(Debug, Default)]
-pub struct LevelInfo {
-    pub width: u32,
-    pub height: u32,
-}
+pub use self::level_data::*;
 
 #[derive(Debug)]
 pub enum GameCommand {

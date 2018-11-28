@@ -1,7 +1,7 @@
 use std::ops::Index;
 use std::ops::IndexMut;
 
-type DimIndex = u16;
+pub type DimIndex = u16;
 type InternalIndex = usize;
 
 #[derive(Debug, PartialEq, Clone)]
@@ -10,8 +10,8 @@ struct Pos {
     y: DimIndex,
 }
 
-#[derive(Debug, Clone)]
-struct Matrix<T> {
+#[derive(Debug, Clone, Default)]
+pub struct Matrix<T> {
     width: DimIndex,
     height: DimIndex,
     data: Vec<T>,
@@ -34,6 +34,13 @@ impl<T> Matrix<T> {
 
     fn is_valid(&self, p: &Pos) -> bool {
         p.x < self.width && p.y < self.height
+    }
+
+    pub fn height(&self) -> DimIndex {
+        self.height
+    }
+    pub fn width(&self) -> DimIndex {
+        self.width
     }
 }
 

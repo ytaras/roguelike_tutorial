@@ -9,8 +9,8 @@ use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::GameWorld;
 use specs::prelude::*;
 
-const CONSOLE_WIDTH: u32 = 80;
-const CONSOLE_HEIGHT: u32 = 45;
+const CONSOLE_WIDTH: u16 = 80;
+const CONSOLE_HEIGHT: u16 = 45;
 
 fn main() {
     let mut world = World::new();
@@ -18,10 +18,7 @@ fn main() {
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
-    world.add_resource(LevelInfo {
-        width: CONSOLE_WIDTH,
-        height: CONSOLE_HEIGHT,
-    });
+    world.add_resource(LevelInfo::new(CONSOLE_WIDTH, CONSOLE_HEIGHT));
 
     world
         .create_entity()
@@ -38,10 +35,10 @@ fn main() {
 
     renderer.run_now(&world.res);
     let mut app = App::new(AppOptions {
-        console_width: CONSOLE_WIDTH,
-        console_height: CONSOLE_HEIGHT,
-        screen_width: CONSOLE_WIDTH * 8,
-        screen_height: CONSOLE_HEIGHT * 8,
+        console_width: CONSOLE_WIDTH.into(),
+        console_height: CONSOLE_HEIGHT.into(),
+        screen_width: (CONSOLE_WIDTH * 8).into(),
+        screen_height: (CONSOLE_HEIGHT * 8).into(),
         window_title: "my roguelike".to_owned(),
         font_path: "terminal_8x8.png".to_owned(),
         vsync: true,
