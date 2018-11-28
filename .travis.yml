@@ -8,7 +8,6 @@ matrix:
     - rust: nightly
 before_cache: |
   if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
-    cargo build --all-targets
     RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
   fi
 cache: cargo
@@ -17,12 +16,5 @@ before_script:
 script:
   - cargo clippy --all-features
   - cargo test
-  - cargo build
-
-after_success: |
-  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
-    cargo bench
-    cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
-    cargo tarpaulin --out Xml
-    bash <(curl -s https://codecov.io/bash)
-  fi
+  - ./ci/bench.sh
+  - ./ci/coverage.sh
