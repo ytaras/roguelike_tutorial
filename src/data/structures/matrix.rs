@@ -47,7 +47,7 @@ impl<T> Matrix<T> {
         self.width
     }
 
-    fn iter(&self) -> MatrixIter<T> {
+    pub fn iter(&self) -> MatrixIter<T> {
         let inner = self.data.iter().enumerate();
         MatrixIter {
             inner,
@@ -88,7 +88,7 @@ impl<'a, T> IndexMut<&'a Pos> for Matrix<T> {
 }
 
 #[derive(Debug)]
-struct MatrixIter<'a, T: 'a> {
+pub struct MatrixIter<'a, T: 'a> {
     inner: Enumerate<Iter<'a, T>>,
     matrix: &'a Matrix<T>,
 }

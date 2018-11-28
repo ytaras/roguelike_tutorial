@@ -1,3 +1,6 @@
+use data::structures::matrix::*;
+use std::ops::{Index, IndexMut};
+
 #[derive(Debug)]
 pub enum TileType {
     WALL,
@@ -9,9 +12,6 @@ impl Default for TileType {
         TileType::GROUND
     }
 }
-
-use data::structures::matrix::*;
-use std::ops::{Index, IndexMut};
 
 #[derive(Debug, Default)]
 pub struct LevelInfo {
@@ -43,5 +43,9 @@ impl LevelInfo {
 
     pub fn height(&self) -> DimIndex {
         self.data.height()
+    }
+
+    pub fn all_cells(&self) -> MatrixIter<TileType> {
+        self.data.iter()
     }
 }
