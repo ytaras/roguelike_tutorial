@@ -8,6 +8,10 @@ doryen-rs="*"
 specs="*"
 specs-derive="*"
 ansi_term="*"
+itertools="*"
+
+[dev-dependencies]
+quickcheck="*"
 
 [badges]
 travis-ci = { repository = "ytaras/rogue_tutorial" }

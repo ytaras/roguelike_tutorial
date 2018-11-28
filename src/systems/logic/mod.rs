@@ -21,7 +21,7 @@ pub struct ExecuteCommands;
 impl<'a> System<'a> for ExecuteCommands {
     type SystemData = (
         Entities<'a>,
-        WriteStorage<'a, HasPos>,
+        WriteStorage<'a, Pos>,
         WriteStorage<'a, PlansExecuting>,
         Read<'a, LazyUpdate>,
     );
@@ -84,12 +84,12 @@ mod tests {
         #[test]
         fn move_moves() {
             let mut w = World::new();
-            w.register::<HasPos>();
+            w.register::<Pos>();
             w.register::<PlansExecuting>();
 
             let e = w
                 .create_entity()
-                .with(HasPos { x: 1, y: 1 })
+                .with(Pos { x: 1, y: 1 })
                 .with(PlansExecuting::new(ActorCommand::Move(S)))
                 .build();
 
@@ -97,10 +97,7 @@ mod tests {
 
             w.maintain();
 
-            assert_eq!(
-                w.read_storage::<HasPos>().get(e),
-                Some(&HasPos { x: 1, y: 2 })
-            );
+            assert_eq!(w.read_storage::<Pos>().get(e), Some(&Pos { x: 1, y: 2 }));
             assert_eq!(w.read_storage::<PlansExecuting>().get(e), None);
         }
     }

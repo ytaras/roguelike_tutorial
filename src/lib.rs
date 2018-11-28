@@ -3,6 +3,13 @@ extern crate doryen_rs;
 extern crate specs;
 extern crate specs_derive;
 
+#[macro_use]
+extern crate itertools;
+
+#[cfg(test)]
+#[macro_use]
+extern crate quickcheck;
+
 pub mod data;
 pub mod systems;
 pub mod ui;
