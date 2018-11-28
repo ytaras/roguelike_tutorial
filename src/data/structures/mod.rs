@@ -1,4 +1,8 @@
 use std::convert::From;
+
+mod matrix;
+mod level_data;
+
 #[derive(Debug, Default)]
 pub struct LevelInfo {
     pub width: u32,
