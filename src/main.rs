@@ -18,7 +18,14 @@ fn main() {
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
-    world.add_resource(LevelInfo::new(CONSOLE_WIDTH, CONSOLE_HEIGHT));
+
+    let mut level = LevelInfo::new(CONSOLE_WIDTH, CONSOLE_HEIGHT);
+
+    for (x, y) in &[(30, 29), (30, 30), (30, 31)] {
+        level[&Pos { x: *x, y: *y }] = TileType::WALL;
+    }
+
+    world.add_resource(level);
 
     world
         .create_entity()

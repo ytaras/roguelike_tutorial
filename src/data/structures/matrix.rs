@@ -5,9 +5,9 @@ pub type DimIndex = u16;
 type InternalIndex = usize;
 
 #[derive(Debug, PartialEq, Clone)]
-struct Pos {
-    x: DimIndex,
-    y: DimIndex,
+pub struct Pos {
+    pub x: DimIndex,
+    pub y: DimIndex,
 }
 
 #[derive(Debug, Clone, Default)]
