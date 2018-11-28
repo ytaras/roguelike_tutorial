@@ -1,4 +1,5 @@
 use std::ops::Index;
+use std::ops::IndexMut;
 
 type DimIndex = u16;
 type InternalIndex = usize;
@@ -60,6 +61,13 @@ impl<'a, T> Index<&'a Pos> for Matrix<T> {
     }
 }
 
+impl<'a, T> IndexMut<&'a Pos> for Matrix<T> {
+    fn index_mut(&mut self, p: &Pos) -> &mut T {
+        let i = self.to_index(p);
+        &mut self.data[i]
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -79,8 +87,15 @@ mod test {
         }
     }
 
+    fn changing() {
+        let mut m: Matrix<bool> = Matrix::new(2, 3);
+        let pos = Pos { x: 1, y: 2 };
+        assert_eq!(bool::default(), m[&pos]);
+        m[&pos] = !bool::default();
+    }
+
     quickcheck! {
-        fn no_owerflow(m: Matrix<bool>) -> TestResult {
+        fn no_overflow(m: Matrix<bool>) -> TestResult {
             let _ = m.max_pos();
             TestResult::passed()
         }
@@ -103,7 +118,19 @@ mod test {
             } else {
                 TestResult::discard()
             }
+        }
 
+        fn mut_index_by_pos(pos: Pos, m: Matrix<bool>) -> TestResult {
+            if m.is_valid(&pos) {
+                let mut m = m;
+                let new_value = !bool::default();
+                m[&pos] = new_value;
+                TestResult::from_bool(
+                    m[&pos] == new_value
+                )
+            } else {
+                TestResult::discard()
+            }
         }
     }
 }
