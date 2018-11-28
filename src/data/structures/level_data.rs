@@ -1,4 +1,4 @@
-enum TileType{
+enum TileType {
     WALL,
-    GROUND
+    GROUND,
 }

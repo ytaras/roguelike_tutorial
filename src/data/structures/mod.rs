@@ -1,7 +1,7 @@
 use std::convert::From;
 
-mod matrix;
 mod level_data;
+mod matrix;
 
 #[derive(Debug, Default)]
 pub struct LevelInfo {

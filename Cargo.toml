@@ -9,6 +9,9 @@ specs="*"
 specs-derive="*"
 ansi_term="*"
 
+[dev-dependencies]
+quickcheck="*"
+
 [badges]
 travis-ci = { repository = "ytaras/rogue_tutorial" }
 coveralls = { repository = "ytaras/rogue_tutorial", service = "github" }
