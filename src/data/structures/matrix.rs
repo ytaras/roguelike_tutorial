@@ -1,5 +1,7 @@
+use std::ops::Index;
+
 type DimIndex = u16;
-type InternalIndex = u32;
+type InternalIndex = usize;
 
 #[derive(Debug, PartialEq, Clone)]
 struct Pos {
@@ -25,7 +27,12 @@ impl<T> Matrix<T> {
         Pos { x, y }
     }
     fn to_index(&self, pos: &Pos) -> InternalIndex {
+        assert!(self.is_valid(&pos));
         (pos.x + pos.y * self.width).into()
+    }
+
+    fn is_valid(&self, p: &Pos) -> bool {
+        p.x < self.width && p.y < self.height
     }
 }
 
@@ -41,6 +48,15 @@ impl<T: Default> Matrix<T> {
             height,
             data,
         }
+    }
+}
+
+impl<'a, T> Index<&'a Pos> for Matrix<T> {
+    type Output = T;
+
+    fn index(&self, pos: &Pos) -> &T {
+        let i = self.to_index(pos);
+        &self.data[i]
     }
 }
 
@@ -70,12 +86,22 @@ mod test {
         }
 
         fn pos_to_index(pos: Pos, m: Matrix<bool>) -> TestResult {
-            if pos.x >= m.width || pos.y >= m.height {
-                TestResult::discard()
-            } else {
+            if m.is_valid(&pos) {
                 TestResult::from_bool(
                     pos == m.to_pos(m.to_index(&pos))
                 )
+            } else {
+                TestResult::discard()
+            }
+        }
+
+        fn index_by_pos(pos: Pos, m: Matrix<bool>) -> TestResult {
+            if m.is_valid(&pos) {
+                TestResult::from_bool(
+                    m[&pos] == bool::default()
+                )
+            } else {
+                TestResult::discard()
             }
 
         }
