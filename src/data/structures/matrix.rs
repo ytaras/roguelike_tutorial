@@ -1,7 +1,9 @@
 use specs::prelude::*;
 use specs_derive::*;
+use std::iter::Enumerate;
 use std::ops::Index;
 use std::ops::IndexMut;
+use std::slice::Iter;
 
 pub type DimIndex = u16;
 type InternalIndex = usize;
@@ -44,6 +46,14 @@ impl<T> Matrix<T> {
     pub fn width(&self) -> DimIndex {
         self.width
     }
+
+    fn iter(&self) -> MatrixIter<T> {
+        let inner = self.data.iter().enumerate();
+        MatrixIter {
+            inner,
+            matrix: self,
+        }
+    }
 }
 
 impl<T: Default> Matrix<T> {
@@ -77,10 +87,20 @@ impl<'a, T> IndexMut<&'a Pos> for Matrix<T> {
     }
 }
 
-impl<'a, T> IntoIterator for &'a Matrix<T> {
+#[derive(Debug)]
+struct MatrixIter<'a, T: 'a> {
+    inner: Enumerate<Iter<'a, T>>,
+    matrix: &'a Matrix<T>,
+}
+
+impl<'a, T> Iterator for MatrixIter<'a, T> {
     type Item = (Pos, &'a T);
-    type IntoIter = ::std::vec::IntoIter<Self::Item>;
-    fn into_iter(self) -> Self::IntoIter {}
+    fn next(&mut self) -> Option<Self::Item> {
+        self.inner.next().map(|(i, t)| {
+            let pos = self.matrix.to_pos(i as InternalIndex);
+            (pos, t)
+        })
+    }
 }
 
 #[cfg(test)]
@@ -94,11 +114,24 @@ mod test {
             let y = DimIndex::arbitrary(g);
             Matrix::new(x, y)
         }
+
+        fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
+            let shrinker = (self.width, self.height).shrink();
+            let iter = shrinker.map(|(x, y)| Matrix::new(x, y));
+            Box::new(iter)
+        }
     }
+
     impl Arbitrary for Pos {
         fn arbitrary<G: Gen>(g: &mut G) -> Self {
             let (x, y) = <(DimIndex, DimIndex)>::arbitrary(g);
             Pos { x, y }
+        }
+
+        fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
+            let shrinker = (self.x, self.y).shrink();
+            let iter = shrinker.map(|(x, y)| Pos { x, y });
+            Box::new(iter)
         }
     }
 
@@ -139,6 +172,13 @@ mod test {
             } else {
                 TestResult::discard()
             }
+        }
+
+        fn iter(m: Matrix<bool>) -> () {
+            let expected_pairs = iproduct!(0..m.height, 0..m.width)
+            .map(|(y, x)| Pos {x ,y }).collect::<Vec<_>>();
+            let real_pairs = m.iter().map(|(p, _)| p).collect::<Vec<_>>();
+            assert_eq!(expected_pairs ,real_pairs);
         }
     }
 }
