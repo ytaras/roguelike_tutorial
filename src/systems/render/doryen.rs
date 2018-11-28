@@ -1,6 +1,7 @@
+use super::{Renderable, WHITE};
 use data::components::*;
 use data::structures::*;
-use doryen_rs::DoryenApi;
+use doryen_rs::{Console, DoryenApi};
 use specs::prelude::*;
 
 pub struct DoryenRenderer<'a> {
@@ -9,7 +10,7 @@ pub struct DoryenRenderer<'a> {
 
 impl<'a> System<'a> for DoryenRenderer<'a> {
     type SystemData = (
-        ReadStorage<'a, HasPos>,
+        ReadStorage<'a, Pos>,
         ReadStorage<'a, IsVisible>,
         Read<'a, LevelInfo>,
     );
@@ -26,8 +27,12 @@ impl<'a> System<'a> for DoryenRenderer<'a> {
             Some('.' as u16),
         );
         for (pos, vis) in (&pos, &vis).join() {
-            con.ascii(pos.x as i32, pos.y as i32, vis.display_char as u16);
-            con.fore(pos.x as i32, pos.y as i32, vis.color);
+            render(con, &pos, vis);
         }
     }
+}
+
+fn render<T: Renderable>(con: &mut Console, pos: &Pos, r: &T) {
+    con.ascii(pos.x as i32, pos.y as i32, r.display_char() as u16);
+    con.fore(pos.x as i32, pos.y as i32, r.color());
 }

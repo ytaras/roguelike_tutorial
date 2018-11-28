@@ -1,10 +1,12 @@
+use specs::prelude::*;
+use specs_derive::*;
 use std::ops::Index;
 use std::ops::IndexMut;
 
 pub type DimIndex = u16;
 type InternalIndex = usize;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Component)]
 pub struct Pos {
     pub x: DimIndex,
     pub y: DimIndex,

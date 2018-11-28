@@ -6,7 +6,7 @@ use specs::prelude::*;
 pub struct StdoutRender;
 
 impl<'a> System<'a> for StdoutRender {
-    type SystemData = (ReadStorage<'a, HasPos>, ReadStorage<'a, IsVisible>);
+    type SystemData = (ReadStorage<'a, Pos>, ReadStorage<'a, IsVisible>);
     fn run(&mut self, (pos, vis): Self::SystemData) {
         use specs::Join;
         for (pos, vis) in (&pos, &vis).join() {

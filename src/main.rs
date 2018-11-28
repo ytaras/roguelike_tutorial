@@ -14,7 +14,7 @@ const CONSOLE_HEIGHT: u16 = 45;
 
 fn main() {
     let mut world = World::new();
-    world.register::<HasPos>();
+    world.register::<Pos>();
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
@@ -30,7 +30,7 @@ fn main() {
     world
         .create_entity()
         .with(IsPlayer)
-        .with(HasPos { x: 1, y: 10 })
+        .with(Pos { x: 1, y: 10 })
         .with(IsVisible {
             color: RED,
             display_char: '@',
