@@ -94,13 +94,6 @@ mod test {
         }
     }
 
-    fn changing() {
-        let mut m: Matrix<bool> = Matrix::new(2, 3);
-        let pos = Pos { x: 1, y: 2 };
-        assert_eq!(bool::default(), m[&pos]);
-        m[&pos] = !bool::default();
-    }
-
     quickcheck! {
         fn no_overflow(m: Matrix<bool>) -> TestResult {
             let _ = m.max_pos();
