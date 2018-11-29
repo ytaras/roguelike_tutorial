@@ -1,5 +1,6 @@
-use data::structures::matrix::*;
 use std::ops::{Index, IndexMut};
+
+use data::structures::matrix::*;
 
 #[derive(Debug)]
 pub enum TileType {
@@ -35,6 +36,10 @@ impl LevelInfo {
         LevelInfo {
             data: Matrix::new(width, height),
         }
+    }
+
+    pub fn with_dim(dim: Pos) -> Self {
+        Self::new(dim.x, dim.y)
     }
 
     pub fn width(&self) -> DimIndex {

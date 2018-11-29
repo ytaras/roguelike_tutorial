@@ -1,11 +1,13 @@
-use super::Renderable;
-use data::components::*;
-use data::structures::*;
 use doryen_rs::{Console, DoryenApi};
 use specs::prelude::*;
 
+use data::components::*;
+use data::structures::*;
+
+use super::Renderable;
+
 pub struct DoryenRenderer<'a> {
-    pub doryen_api: &'a mut DoryenApi,
+    pub doryen_api: &'a mut Console,
 }
 
 impl<'a> System<'a> for DoryenRenderer<'a> {
@@ -16,12 +18,12 @@ impl<'a> System<'a> for DoryenRenderer<'a> {
     );
     fn run(&mut self, (pos, vis, li): Self::SystemData) {
         use specs::Join;
-        let con = self.doryen_api.con();
+        let con = &mut self.doryen_api;
         for (pos, vis) in li.all_cells() {
-            render(con, &pos, vis);
+            render(*con, &pos, vis);
         }
         for (pos, vis) in (&pos, &vis).join() {
-            render(con, &pos, vis);
+            render(*con, &pos, vis);
         }
     }
 }

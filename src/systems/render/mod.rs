@@ -1,15 +1,16 @@
-mod console;
-mod doryen;
+use doryen_rs::Console;
 
 use data::components::IsVisible;
 use data::structures::TileType;
-use doryen_rs::DoryenApi;
+
+mod console;
+mod doryen;
 
 pub fn render_console() -> console::StdoutRender {
     console::StdoutRender
 }
 
-pub fn render_doryen(doryen_api: &mut DoryenApi) -> doryen::DoryenRenderer {
+pub fn render_doryen(doryen_api: &mut Console) -> doryen::DoryenRenderer {
     doryen::DoryenRenderer { doryen_api }
 }
 
