@@ -1,9 +1,10 @@
-use specs::prelude::*;
-use specs_derive::*;
 use std::iter::Enumerate;
 use std::ops::Index;
 use std::ops::IndexMut;
 use std::slice::Iter;
+
+use specs::prelude::*;
+use specs_derive::*;
 
 pub type DimIndex = u16;
 type InternalIndex = usize;
@@ -37,8 +38,8 @@ impl<T> Matrix<T> {
         (pos.x + pos.y * self.width).into()
     }
 
-    fn is_valid(&self, p: &Pos) -> bool {
-        p.x < self.width && p.y < self.height
+    pub fn is_valid(&self, p: &Pos) -> bool {
+        p.x >= 0 && p.y >= 0 && p.x < self.width && p.y < self.height
     }
 
     pub fn height(&self) -> DimIndex {
@@ -106,8 +107,9 @@ impl<'a, T> Iterator for MatrixIter<'a, T> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use quickcheck::*;
+
+    use super::*;
 
     impl<T: 'static + Default + Clone + Send> Arbitrary for Matrix<T> {
         fn arbitrary<G: Gen>(g: &mut G) -> Self {

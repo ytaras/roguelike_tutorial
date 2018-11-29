@@ -1,10 +1,29 @@
-use data::structures::matrix::*;
 use std::ops::{Index, IndexMut};
+
+use data::structures::matrix::*;
 
 #[derive(Debug)]
 pub enum TileType {
     WALL,
     GROUND,
+}
+
+pub trait CellObject {
+    fn is_walkable(&self) -> bool;
+    fn blocks_sight(&self) -> bool;
+}
+
+impl CellObject for TileType {
+    fn is_walkable(&self) -> bool {
+        match self {
+            TileType::WALL => false,
+            _ => true,
+        }
+    }
+
+    fn blocks_sight(&self) -> bool {
+        unimplemented!()
+    }
 }
 
 impl Default for TileType {
@@ -47,5 +66,9 @@ impl LevelInfo {
 
     pub fn all_cells(&self) -> MatrixIter<TileType> {
         self.data.iter()
+    }
+
+    pub fn is_valid(&self, p: &Pos) -> bool {
+        self.data.is_valid(p)
     }
 }
