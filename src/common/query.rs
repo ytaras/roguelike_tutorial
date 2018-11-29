@@ -1,5 +1,6 @@
 use specs::prelude::*;
-
+use std::collections::HashMap;
+use std::hash::Hash;
 pub fn unique<T, R>(joinable: T) -> Result<Option<R>, ()>
 where
     T: Join<Type = R>,
@@ -14,6 +15,15 @@ where
     } else {
         Ok(None)
     }
+}
+
+pub fn hash<K, V, KK, VV>(key: K, value: V) -> HashMap<KK, VV>
+where
+    K: Join<Type = KK>,
+    V: Join<Type = VV>,
+    KK: Hash + Eq,
+{
+    (key, value).join().collect::<HashMap<_, _>>()
 }
 
 #[cfg(test)]

@@ -9,7 +9,7 @@ use specs_derive::*;
 pub type DimIndex = u16;
 type InternalIndex = usize;
 
-#[derive(Debug, PartialEq, Copy, Clone, Component)]
+#[derive(Debug, PartialEq, Copy, Clone, Component, Eq, Hash)]
 pub struct Pos {
     pub x: DimIndex,
     pub y: DimIndex,
