@@ -47,9 +47,14 @@ impl Engine for GameWorld {
         self.world.maintain();
     }
     fn render(&mut self, api: &mut DoryenApi) {
-        let mut renderer = render_doryen(api.con());
-        use specs::RunNow;
-        renderer.run_now(&self.world.res);
+        {
+            let mut renderer = render_doryen(&mut self.console);
+            use specs::RunNow;
+            renderer.run_now(&self.world.res);
+        }
+        self.console.blit(
+            0, 0, api.con(), 1.0, 1.0, None,
+        );
     }
 }
 
