@@ -1,10 +1,10 @@
 use std::convert::From;
 
-mod level_data;
-mod matrix;
-
 pub use self::level_data::*;
 pub use self::matrix::{DimIndex, Pos};
+
+mod level_data;
+mod matrix;
 
 #[derive(Debug)]
 pub enum GameCommand {
@@ -60,13 +60,13 @@ pub const E: Dir = Dir {
     ew: MoveDir::Plus,
 };
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Dir {
     pub ns: MoveDir,
     pub ew: MoveDir,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum MoveDir {
     Minus,
     Zero,

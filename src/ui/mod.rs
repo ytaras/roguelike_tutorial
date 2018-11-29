@@ -1,11 +1,16 @@
-mod keymapper;
-use self::keymapper::*;
-use data::components::*;
-use data::structures::*;
 use doryen_rs::*;
 use specs::prelude::*;
+
+use common::validations::Validation;
+use data::components::*;
+use data::structures::*;
 use systems::logic::*;
 use systems::render::render_doryen;
+use systems::validation::MoveValidation;
+
+use self::keymapper::*;
+
+mod keymapper;
 
 pub struct GameWorld {
     world: World,
@@ -48,6 +53,7 @@ impl Engine for GameWorld {
 pub struct GameCommandHandler;
 
 impl GameCommandHandler {
+    // FIXME - Use validation framework for everyone here
     fn exec(&self, gc: &Command, world: &mut World) {
         match gc {
             Command::GameCommand(GameCommand::Exit) => {
@@ -59,16 +65,24 @@ impl GameCommandHandler {
                 // TODO Extract command handling from UI layer
                 let mut system: AssertUnique<IsPlayer> = Default::default();
                 system.run_now(&world.res);
-                // TODO Extract exec to system or provide helper methods - to decide
-                let (e, ispl, mut pl): (
-                    Entities,
-                    ReadStorage<IsPlayer>,
-                    WriteStorage<PlansExecuting>,
-                ) = world.system_data();
-                use specs::Join;
-                for (e, _) in (&e, &ispl).join() {
-                    pl.insert(e, PlansExecuting::new(ac.to_owned())).unwrap();
+
+                match ac {
+                    ActorCommand::Move(dir) => {
+                        if let Some(res) = MoveValidation::default().exec(*dir, world) {
+                            // TODO Extract exec to system or provide helper methods - to decide
+                            let (e, ispl, mut pl): (
+                                Entities,
+                                ReadStorage<IsPlayer>,
+                                WriteStorage<PlansExecuting>,
+                            ) = world.system_data();
+                            use specs::Join;
+                            for (e, _) in (&e, &ispl).join() {
+                                pl.insert(e, PlansExecuting::new(ac.to_owned())).unwrap();
+                            }
+                        }
+                    }
                 }
+
             }
         }
     }

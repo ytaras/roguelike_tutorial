@@ -7,11 +7,11 @@ use data::structures::{CellObject, Dir, LevelInfo};
 use data::structures::Pos;
 
 #[derive(Debug, Default)]
-struct MoveValidation;
+pub struct MoveValidation;
 
 impl<'a> Validation<'a> for MoveValidation {
     type Input = Dir;
-    type Output = Option<Pos>;
+    type Output = Option<Dir>;
     type SD = (ReadStorage<'a, Pos>,
                ReadStorage<'a, IsPlayer>,
                Read<'a, LevelInfo>,
@@ -25,7 +25,7 @@ impl<'a> Validation<'a> for MoveValidation {
             if !level.is_valid(&new_pos) || !level[&new_pos].is_walkable() {
                 return None;
             }
-            return Some(new_pos);
+            return Some(i);
         }
         panic!("Player not found");
     }
