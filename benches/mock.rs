@@ -5,6 +5,7 @@ extern crate test;
 
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::systems::logic::*;
+use rogue_tutorial::*;
 use specs::prelude::*;
 use specs::RunNow;
 use test::Bencher;
@@ -22,5 +23,20 @@ fn bench_unique_assertion(b: &mut Bencher) {
     let mut system: AssertUnique<IsPlayer> = Default::default();
     b.iter(|| {
         system.run_now(&w.res);
+    });
+}
+
+#[bench]
+fn bench_unique_query(b: &mut Bencher) {
+    let mut w = World::new();
+    w.register::<IsPlayer>();
+    w.create_entity().with(IsPlayer).build();
+    for _ in 0..ENTITIES {
+        w.create_entity().with(IsPlayer).build();
+    }
+
+    let storage = &w.read_storage::<IsPlayer>();
+    b.iter(|| {
+        let _ = common::query::unique(storage);
     });
 }

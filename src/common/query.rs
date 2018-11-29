@@ -1,15 +1,19 @@
 use specs::prelude::*;
 
-fn unique<T, R>(joinable: T) -> Option<R>
+pub fn unique<T, R>(joinable: T) -> Result<Option<R>, ()>
 where
     T: Join<Type = R>,
 {
-    use specs::Join;
-
-    // Not very performant?
-    let mut res = joinable.join().collect::<Vec<_>>();
-    assert!(res.len() <= 1);
-    res.pop()
+    let mut iter = joinable.join();
+    if let Some(res) = iter.next() {
+        if let None = iter.next() {
+            Ok(Some(res))
+        } else {
+            Err(())
+        }
+    } else {
+        Ok(None)
+    }
 }
 
 #[cfg(test)]
@@ -38,30 +42,27 @@ mod test {
     #[test]
     fn test_unique_return_some() {
         let w = create_world();
-        use specs::Join;
         let storages = (&w.read_storage::<Marker>(), &w.read_storage::<Data>());
-        let (_, d) = unique(storages).unwrap();
+        let (_, d) = unique(storages).unwrap().unwrap();
         assert_eq!(0, d.0);
     }
 
     #[test]
     fn test_unique_return_none() {
         let w = create_world();
-        use specs::Join;
         let storages = (
             &w.read_storage::<MissingMarker>(),
             &w.read_storage::<Data>(),
         );
-        assert_eq!(None, unique(storages));
+        assert_eq!(None, unique(storages).unwrap());
     }
 
     #[test]
-    #[should_panic]
+
     fn test_unique_panics() {
         let w = create_world();
-        use specs::Join;
         let storages = &w.read_storage::<Data>();
-        unique(storages);
+        assert!(unique(storages).is_err());
     }
 
 }
