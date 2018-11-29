@@ -54,9 +54,7 @@ impl Engine for GameWorld {
             use specs::RunNow;
             renderer.run_now(&self.world.res);
         }
-        self.console.blit(
-            0, 0, api.con(), 1.0, 1.0, None,
-        );
+        self.console.blit(0, 0, api.con(), 1.0, 1.0, None);
     }
 }
 
@@ -92,7 +90,6 @@ impl GameCommandHandler {
                         }
                     }
                 }
-
             }
         }
     }

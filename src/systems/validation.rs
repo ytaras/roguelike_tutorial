@@ -3,8 +3,8 @@ use specs::ReadStorage;
 
 use common::validations::Validation;
 use data::components::*;
-use data::structures::{CellObject, Dir, LevelInfo};
 use data::structures::Pos;
+use data::structures::{CellObject, Dir, LevelInfo};
 
 #[derive(Debug, Default)]
 pub struct MoveValidation;
@@ -12,9 +12,10 @@ pub struct MoveValidation;
 impl<'a> Validation<'a> for MoveValidation {
     type Input = Dir;
     type Output = Option<Dir>;
-    type SD = (ReadStorage<'a, Pos>,
-               ReadStorage<'a, IsPlayer>,
-               Read<'a, LevelInfo>,
+    type SD = (
+        ReadStorage<'a, Pos>,
+        ReadStorage<'a, IsPlayer>,
+        Read<'a, LevelInfo>,
     );
 
     fn run(&self, i: Dir, (pos, pl, level): Self::SD) -> Self::Output {
@@ -23,7 +24,10 @@ impl<'a> Validation<'a> for MoveValidation {
         let mut iter = (&pos, &pl).join();
         if let Some((pos, _)) = iter.next() {
             let new_pos: Pos = pos + i;
-            println!("player in {:?}, going to {:?} in {:?}", pos, new_pos, *level);
+            println!(
+                "player in {:?}, going to {:?} in {:?}",
+                pos, new_pos, *level
+            );
             if !level.is_valid(&new_pos) || !level[&new_pos].is_walkable() {
                 return None;
             }
@@ -38,9 +42,9 @@ mod tests {
     use specs::{Builder, World};
 
     use data::components::*;
-    use data::structures::{E, S};
     use data::structures::LevelInfo;
     use data::structures::TileType::WALL;
+    use data::structures::{E, S};
 
     use super::*;
 

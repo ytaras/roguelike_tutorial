@@ -11,13 +11,14 @@ pub trait Validation<'a> {
     fn run(&self, i: Self::Input, data: Self::SD) -> Self::Output;
 
     fn exec(&self, i: Self::Input, world: &'a mut World) -> Self::Output {
-        world.exec(|sd|
-            self.run(i, sd)
-        )
+        world.exec(|sd| self.run(i, sd))
     }
 
     fn cons<V2>(&'a self, other: &'a V2) -> ConsV<Self, V2>
-        where V2: Validation<'a, Input=Self::Output>, Self: Sized {
+    where
+        V2: Validation<'a, Input = Self::Output>,
+        Self: Sized,
+    {
         ConsV {
             v1: &self,
             v2: other,
@@ -33,10 +34,17 @@ pub struct PureValidator<I, O> {
 
 impl<I, O> PureValidator<I, O> {
     pub fn new(func: Box<Fn(I) -> O>) -> Self {
-        PureValidator { func, id: Default::default(), od: Default::default() }
+        PureValidator {
+            func,
+            id: Default::default(),
+            od: Default::default(),
+        }
     }
 
-    pub fn from_closure<F>(f: F) -> Self where F: Fn(I) -> O + 'static {
+    pub fn from_closure<F>(f: F) -> Self
+    where
+        F: Fn(I) -> O + 'static,
+    {
         let b = Box::new(f);
         Self::new(b)
     }
@@ -47,29 +55,39 @@ impl<'a, I, O> Validation<'a> for PureValidator<I, O> {
     type Output = O;
     type SD = ();
 
-    fn run(&self, i: <Self as Validation<'a>>::Input, (): <Self as Validation<'a>>::SD) -> <Self as Validation<'a>>::Output {
+    fn run(
+        &self,
+        i: <Self as Validation<'a>>::Input,
+        (): <Self as Validation<'a>>::SD,
+    ) -> <Self as Validation<'a>>::Output {
         let f = &self.func;
         f(i)
     }
 }
 
-pub struct ConsV<'a, V1, V2> where V1: 'a, V2: 'a {
+pub struct ConsV<'a, V1, V2>
+where
+    V1: 'a,
+    V2: 'a,
+{
     v1: &'a V1,
     v2: &'a V2,
 }
 
 impl<'a, V1, V2, I, IO, O> Validation<'a> for ConsV<'a, V1, V2>
-    where V1: Validation<'a, Input=I, Output=IO> + 'a,
-          V2: Validation<'a, Input=IO, Output=O> + 'a,
+where
+    V1: Validation<'a, Input = I, Output = IO> + 'a,
+    V2: Validation<'a, Input = IO, Output = O> + 'a,
 {
     type Input = I;
     type Output = O;
-    type SD = (
-        <V1 as Validation<'a>>::SD,
-        <V2 as Validation<'a>>::SD,
-    );
+    type SD = (<V1 as Validation<'a>>::SD, <V2 as Validation<'a>>::SD);
 
-    fn run(&self, i: <Self as Validation<'a>>::Input, (v1sd, v2sd): <Self as Validation<'a>>::SD) -> <Self as Validation<'a>>::Output {
+    fn run(
+        &self,
+        i: <Self as Validation<'a>>::Input,
+        (v1sd, v2sd): <Self as Validation<'a>>::SD,
+    ) -> <Self as Validation<'a>>::Output {
         let r1: IO = self.v1.run(i, v1sd);
         let r2: O = self.v2.run(r1, v2sd);
         r2
@@ -90,9 +108,7 @@ mod test {
     #[test]
     fn pure_validation() {
         let mut w = World::new();
-        let validator = PureValidator::from_closure(
-            |x: i32| x.to_string()
-        );
+        let validator = PureValidator::from_closure(|x: i32| x.to_string());
 
         let res = validator.exec(5, &mut w);
         assert_eq!("5", res);
