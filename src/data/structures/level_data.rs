@@ -56,6 +56,10 @@ impl LevelInfo {
         }
     }
 
+    pub fn with_dim(dim: Pos) -> Self {
+        Self::new(dim.x, dim.y)
+    }
+
     pub fn width(&self) -> DimIndex {
         self.data.width()
     }

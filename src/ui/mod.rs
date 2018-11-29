@@ -16,24 +16,29 @@ pub struct GameWorld {
     world: World,
     key_mapper: KeyMapper,
     game_command_handler: GameCommandHandler,
+    console: Console,
 }
 
 impl GameWorld {
-    pub fn new(world: World) -> Self {
+    pub fn new(mut world: World) -> Self {
         let key_mapper = KeyMapper::new();
         let game_command_handler = GameCommandHandler;
+        let console: Console = world.exec(|level_info: Read<LevelInfo>| {
+            Console::new(level_info.width().into(), level_info.height().into())
+        });
         GameWorld {
             world,
             key_mapper,
             game_command_handler,
+            console,
         }
     }
 }
 
 impl Engine for GameWorld {
-    fn update(&mut self, _api: &mut DoryenApi) {
+    fn update(&mut self, api: &mut DoryenApi) {
         use specs::RunNow;
-        let input = _api.input();
+        let input = api.input();
         for (key, command) in self.key_mapper.commands() {
             if input.key_pressed(key) {
                 self.game_command_handler.exec(command, &mut self.world);
@@ -44,9 +49,14 @@ impl Engine for GameWorld {
         self.world.maintain();
     }
     fn render(&mut self, api: &mut DoryenApi) {
-        let mut renderer = render_doryen(api);
-        use specs::RunNow;
-        renderer.run_now(&self.world.res);
+        {
+            let mut renderer = render_doryen(&mut self.console);
+            use specs::RunNow;
+            renderer.run_now(&self.world.res);
+        }
+        self.console.blit(
+            0, 0, api.con(), 1.0, 1.0, None,
+        );
     }
 }
 

@@ -39,7 +39,7 @@ impl<T> Matrix<T> {
     }
 
     pub fn is_valid(&self, p: &Pos) -> bool {
-        p.x >= 0 && p.y >= 0 && p.x < self.width && p.y < self.height
+        p.x < self.width && p.y < self.height
     }
 
     pub fn height(&self) -> DimIndex {

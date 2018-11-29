@@ -3,14 +3,17 @@ extern crate rogue_tutorial;
 extern crate specs;
 
 use doryen_rs::{App, AppOptions};
+use specs::prelude::*;
+
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
 use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::GameWorld;
-use specs::prelude::*;
 
-const CONSOLE_WIDTH: u16 = 80;
-const CONSOLE_HEIGHT: u16 = 45;
+type Dim = Pos;
+
+const MAP_DIM: Dim = Dim { x: 90, y: 45 };
+const CONSOLE_DIM: Dim = Dim { x: 90, y: 50 };
 
 fn main() {
     let mut world = World::new();
@@ -19,7 +22,7 @@ fn main() {
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
 
-    let mut level = LevelInfo::new(CONSOLE_WIDTH, CONSOLE_HEIGHT);
+    let mut level = LevelInfo::with_dim(MAP_DIM);
 
     for (x, y) in &[(30, 29), (30, 30), (30, 31)] {
         level[&Pos { x: *x, y: *y }] = TileType::WALL;
@@ -31,8 +34,8 @@ fn main() {
         .create_entity()
         .with(IsPlayer)
         .with(Pos {
-            x: CONSOLE_WIDTH / 2,
-            y: CONSOLE_HEIGHT / 2,
+            x: MAP_DIM.x / 2,
+            y: MAP_DIM.y / 2,
         }).with(IsVisible {
             color: RED,
             display_char: '@',
@@ -41,8 +44,8 @@ fn main() {
     world
         .create_entity()
         .with(Pos {
-            x: CONSOLE_WIDTH / 2 - 5,
-            y: CONSOLE_HEIGHT / 2,
+            x: MAP_DIM.x / 2 - 5,
+            y: MAP_DIM.y / 2,
         }).with(IsVisible {
             color: YELLOW,
             display_char: '@',
@@ -54,10 +57,10 @@ fn main() {
 
     renderer.run_now(&world.res);
     let mut app = App::new(AppOptions {
-        console_width: CONSOLE_WIDTH.into(),
-        console_height: CONSOLE_HEIGHT.into(),
-        screen_width: (CONSOLE_WIDTH * 8).into(),
-        screen_height: (CONSOLE_HEIGHT * 8).into(),
+        console_width: CONSOLE_DIM.x.into(),
+        console_height: CONSOLE_DIM.y.into(),
+        screen_width: (CONSOLE_DIM.x * 8).into(),
+        screen_height: (CONSOLE_DIM.y * 8).into(),
         window_title: "my roguelike".to_owned(),
         font_path: "terminal_8x8.png".to_owned(),
         vsync: true,
