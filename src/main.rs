@@ -9,8 +9,11 @@ use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::GameWorld;
 use specs::prelude::*;
 
+// TODO Use Dim type
 const CONSOLE_WIDTH: u16 = 80;
 const CONSOLE_HEIGHT: u16 = 45;
+const WINDOW_WIDTH: u16 = 80;
+const WINDOW_HEIGHT: u16 = 50;
 
 fn main() {
     let mut world = World::new();
@@ -54,10 +57,10 @@ fn main() {
 
     renderer.run_now(&world.res);
     let mut app = App::new(AppOptions {
-        console_width: CONSOLE_WIDTH.into(),
-        console_height: CONSOLE_HEIGHT.into(),
-        screen_width: (CONSOLE_WIDTH * 8).into(),
-        screen_height: (CONSOLE_HEIGHT * 8).into(),
+        console_width: WINDOW_WIDTH.into(),
+        console_height: WINDOW_HEIGHT.into(),
+        screen_width: (WINDOW_WIDTH * 8).into(),
+        screen_height: (WINDOW_HEIGHT * 8).into(),
         window_title: "my roguelike".to_owned(),
         font_path: "terminal_8x8.png".to_owned(),
         vsync: true,
