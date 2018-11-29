@@ -19,6 +19,7 @@ pub const WHITE: Color = (255, 255, 255, 255);
 pub const BLACK: Color = (0, 0, 0, 255);
 pub const DARK_GROUND: Color = (50, 50, 50, 255);
 pub const DARK_WALL: Color = (50, 50, 50, 255);
+pub const YELLOW: Color = (255, 255, 0, 255);
 pub trait Renderable {
     fn color(&self) -> Color;
     fn display_char(&self) -> char;

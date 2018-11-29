@@ -1,4 +1,4 @@
-use super::{Renderable, WHITE};
+use super::Renderable;
 use data::components::*;
 use data::structures::*;
 use doryen_rs::{Console, DoryenApi};
@@ -20,15 +20,6 @@ impl<'a> System<'a> for DoryenRenderer<'a> {
         for (pos, vis) in li.all_cells() {
             render(con, &pos, vis);
         }
-        // con.area(
-        //     0,
-        //     0,
-        //     li.width().into(),
-        //     li.height().into(),
-        //     Some(WHITE),
-        //     None,
-        //     Some('.' as u16),
-        // );
         for (pos, vis) in (&pos, &vis).join() {
             render(con, &pos, vis);
         }

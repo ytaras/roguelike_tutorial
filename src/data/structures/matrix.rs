@@ -27,6 +27,7 @@ impl<T> Matrix<T> {
     }
 
     fn to_pos(&self, i: InternalIndex) -> Pos {
+        assert!(i < self.max_pos());
         let x: DimIndex = (i % self.width as InternalIndex) as DimIndex;
         let y: DimIndex = (i / self.width as InternalIndex) as DimIndex;
         Pos { x, y }

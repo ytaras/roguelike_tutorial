@@ -30,9 +30,21 @@ fn main() {
     world
         .create_entity()
         .with(IsPlayer)
-        .with(Pos { x: 1, y: 10 })
-        .with(IsVisible {
+        .with(Pos {
+            x: CONSOLE_WIDTH / 2,
+            y: CONSOLE_HEIGHT / 2,
+        }).with(IsVisible {
             color: RED,
+            display_char: '@',
+        }).build();
+
+    world
+        .create_entity()
+        .with(Pos {
+            x: CONSOLE_WIDTH / 2 - 5,
+            y: CONSOLE_HEIGHT / 2,
+        }).with(IsVisible {
+            color: YELLOW,
             display_char: '@',
         }).build();
 
