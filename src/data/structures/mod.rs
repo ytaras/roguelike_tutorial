@@ -74,10 +74,10 @@ pub enum MoveDir {
 }
 
 impl MoveDir {
-    pub fn to_int(&self) -> i8 {
+    pub fn to_int(self) -> i8 {
         self.to_num()
     }
-    pub fn to_num<T: From<i8>>(&self) -> T {
+    pub fn to_num<T: From<i8>>(self) -> T {
         match self {
             MoveDir::Minus => T::from(-1),
             MoveDir::Plus => T::from(1),

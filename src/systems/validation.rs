@@ -19,7 +19,9 @@ impl<'a> Validation<'a> for MoveValidation {
 
     fn run(&self, i: Dir, (pos, pl, level): Self::SD) -> Self::Output {
         use specs::Join;
-        for (pos, _) in (&pos, &pl).join() {
+        // TODO Create helpers for working with unique values
+        let mut iter = (&pos, &pl).join();
+        if let Some((pos, _)) = iter.next() {
             let new_pos: Pos = pos + i;
             println!("player in {:?}, going to {:?} in {:?}", pos, new_pos, *level);
             if !level.is_valid(&new_pos) || !level[&new_pos].is_walkable() {

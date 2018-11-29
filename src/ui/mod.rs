@@ -87,7 +87,7 @@ impl GameCommandHandler {
                             ) = world.system_data();
                             use specs::Join;
                             for (e, _) in (&e, &ispl).join() {
-                                pl.insert(e, PlansExecuting::new(ac.to_owned())).unwrap();
+                                pl.insert(e, PlansExecuting::new(ActorCommand::Move(res)));
                             }
                         }
                     }

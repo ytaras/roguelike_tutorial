@@ -56,7 +56,7 @@ impl LevelInfo {
         }
     }
 
-    pub fn with_dim(dim: Pos) -> Self {
+    pub fn with_dim(dim: &Pos) -> Self {
         Self::new(dim.x, dim.y)
     }
 
