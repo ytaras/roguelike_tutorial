@@ -21,6 +21,7 @@ fn main() {
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
+    world.register::<TakesWholeTile>();
 
     let mut level = LevelInfo::with_dim(&MAP_DIM);
 
