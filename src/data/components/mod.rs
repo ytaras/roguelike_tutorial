@@ -3,6 +3,10 @@ use specs_derive::*;
 
 use super::structures::*;
 
+pub use self::builder::*;
+
+mod builder;
+
 impl<'a> std::ops::AddAssign<&'a Dir> for &'a mut Pos {
     fn add_assign(&mut self, other: &'a Dir) {
         // FIXME - this can have underflow
