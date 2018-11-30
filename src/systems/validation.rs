@@ -1,6 +1,7 @@
 use specs::Read;
 use specs::ReadStorage;
 
+use common::query::*;
 use common::validations::Validation;
 use data::components::*;
 use data::structures::{CellObject, Dir, LevelInfo};
@@ -19,27 +20,19 @@ impl<'a> Validation<'a> for MoveValidation {
         Read<'a, LevelInfo>,
     );
 
-    fn run(&self, i: Dir, (pos_storage, pl, tile, level): Self::SD) -> Self::Output {
+    fn run(&self, move_dir: Dir, (pos_storage, pl, tile, level): Self::SD) -> Self::Output {
         use specs::Join;
         // TODO Create helpers for working with unique values
-        let mut iter = (&pos_storage, &pl).join();
-        if let Some((pos, _)) = iter.next() {
-            let new_pos: Pos = pos + i;
-            println!(
-                "player in {:?}, going to {:?} in {:?}",
-                pos, new_pos, *level
-            );
-            if !level.is_valid(&new_pos) || !level[&new_pos].is_walkable() {
-                return None;
-            }
-            for (other_pos, _) in (&pos_storage, &tile).join() {
-                if other_pos == &new_pos {
-                    return None
-                }
-            }
-            return Some(i);
-        }
-        panic!("Player not found");
+        let res: Option<Dir> = unique((&pos_storage, &pl))
+            .unwrap()
+            .map(|(player_pos, _)| { player_pos + move_dir })
+            .filter(|new_pos| level.is_valid(&new_pos) && level[&new_pos].is_walkable())
+            .filter(|new_pos| {
+                let existing_entities = hash(&pos_storage, &tile);
+                !existing_entities.contains_key(new_pos)
+            })
+            .map(|_| move_dir);
+        res
     }
 }
 
