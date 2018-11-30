@@ -78,4 +78,21 @@ mod test {
         assert!(unique(storages).is_err());
     }
 
+    #[test]
+    fn test_unique_assign() {
+        let w = create_world();
+        {
+            let storages = (&w.read_storage::<Marker>(), &mut w.write_storage::<Data>());
+
+            if let Some((_, data)) = unique(storages).unwrap() {
+                data.0 = 5;
+            }
+        }
+        let storages = (&w.read_storage::<Marker>(), &mut w.write_storage::<Data>());
+
+        let result = storages.join().map(|(_, d)| d).collect::<Vec<_>>();
+        let expected = vec![&Data(5)];
+        assert_eq!(expected, result);
+    }
+
 }

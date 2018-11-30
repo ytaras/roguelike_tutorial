@@ -35,18 +35,24 @@ fn main() {
         .create_entity()
         .is_player()
         .with_actor_components(
-            '@', RED, Pos {
+            '@',
+            RED,
+            Pos {
                 x: MAP_DIM.x / 2,
                 y: MAP_DIM.y / 2,
-            }).build();
+            },
+        ).build();
 
     world
         .create_entity()
         .with_actor_components(
-            '@', YELLOW, Pos {
+            '@',
+            YELLOW,
+            Pos {
                 x: MAP_DIM.x / 2 - 5,
                 y: MAP_DIM.y / 2,
-            }).build();
+            },
+        ).build();
 
     let mut renderer = render_console();
 
