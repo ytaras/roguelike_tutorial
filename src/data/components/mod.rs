@@ -36,6 +36,9 @@ pub struct IsVisible {
 #[derive(Component, Debug, Default)]
 pub struct IsPlayer;
 
+#[derive(Component, Debug, Default)]
+pub struct TakesWholeTile;
+
 #[derive(Component, Debug, PartialEq)]
 pub struct PlansExecuting(pub ActorCommand);
 impl PlansExecuting {
