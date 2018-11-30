@@ -37,14 +37,15 @@ pub struct LevelInfo {
     data: Matrix<TileType>,
 }
 
-impl<'a> Index<&'a Pos> for LevelInfo {
+impl<'a> Index<Pos> for LevelInfo {
     type Output = TileType;
-    fn index(&self, i: &Pos) -> &TileType {
+    fn index(&self, i: Pos) -> &TileType {
         &self.data[i]
     }
 }
-impl<'a> IndexMut<&'a Pos> for LevelInfo {
-    fn index_mut(&mut self, i: &Pos) -> &mut TileType {
+
+impl<'a> IndexMut<Pos> for LevelInfo {
+    fn index_mut(&mut self, i: Pos) -> &mut TileType {
         &mut self.data[i]
     }
 }
@@ -56,7 +57,7 @@ impl LevelInfo {
         }
     }
 
-    pub fn with_dim(dim: &Pos) -> Self {
+    pub fn with_dim(dim: Pos) -> Self {
         Self::new(dim.x, dim.y)
     }
 
@@ -72,7 +73,7 @@ impl LevelInfo {
         self.data.iter()
     }
 
-    pub fn is_valid(&self, p: &Pos) -> bool {
+    pub fn is_valid(&self, p: Pos) -> bool {
         self.data.is_valid(p)
     }
 }

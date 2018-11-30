@@ -15,7 +15,7 @@ impl<'a> std::ops::AddAssign<&'a Dir> for &'a mut Pos {
     }
 }
 
-impl<'a> std::ops::Add<Dir> for &'a Pos {
+impl<'a> std::ops::Add<Dir> for Pos {
     type Output = Pos;
 
     fn add(self, other: Dir) -> Pos {

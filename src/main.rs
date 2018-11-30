@@ -23,10 +23,10 @@ fn main() {
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
 
-    let mut level = LevelInfo::with_dim(&MAP_DIM);
+    let mut level = LevelInfo::with_dim(MAP_DIM);
 
     for (x, y) in &[(30, 29), (30, 30), (30, 31)] {
-        level[&Pos { x: *x, y: *y }] = TileType::WALL;
+        level[Pos { x: *x, y: *y }] = TileType::WALL;
     }
 
     world.add_resource(level);

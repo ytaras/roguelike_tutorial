@@ -21,12 +21,10 @@ impl<'a> Validation<'a> for MoveValidation {
     );
 
     fn run(&self, move_dir: Dir, (pos_storage, pl, tile, level): Self::SD) -> Self::Output {
-        use specs::Join;
-        // TODO Create helpers for working with unique values
         let res: Option<Dir> = unique((&pos_storage, &pl))
             .unwrap()
-            .map(|(player_pos, _)| { player_pos + move_dir })
-            .filter(|new_pos| level.is_valid(&new_pos) && level[&new_pos].is_walkable())
+            .map(|(&player_pos, _)| { player_pos + move_dir })
+            .filter(|new_pos| level.is_valid(*new_pos) && level[*new_pos].is_walkable())
             .filter(|new_pos| {
                 let existing_entities = hash(&pos_storage, &tile);
                 !existing_entities.contains_key(new_pos)
@@ -52,7 +50,7 @@ mod tests {
         let mut w = World::new();
         let mut level = LevelInfo::new(1, 2);
         if add_wall {
-            level[&Pos { x: 0, y: 1 }] = WALL;
+            level[Pos { x: 0, y: 1 }] = WALL;
         }
         w.add_resource(level);
         w.register::<IsPlayer>();

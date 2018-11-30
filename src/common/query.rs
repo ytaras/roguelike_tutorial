@@ -1,13 +1,15 @@
-use specs::prelude::*;
 use std::collections::HashMap;
 use std::hash::Hash;
+
+use specs::prelude::*;
+
 pub fn unique<T, R>(joinable: T) -> Result<Option<R>, ()>
 where
     T: Join<Type = R>,
 {
     let mut iter = joinable.join();
     if let Some(res) = iter.next() {
-        if let None = iter.next() {
+        if iter.next().is_none() {
             Ok(Some(res))
         } else {
             Err(())
@@ -28,9 +30,10 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use specs::prelude::*;
     use specs_derive::*;
+
+    use super::*;
 
     #[derive(Component, Debug, PartialEq)]
     struct MissingMarker;
