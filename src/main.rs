@@ -21,35 +21,32 @@ fn main() {
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
+    world.register::<TakesWholeTile>();
 
     let mut level = LevelInfo::with_dim(MAP_DIM);
 
     for (x, y) in &[(30, 29), (30, 30), (30, 31)] {
-        level[&Pos { x: *x, y: *y }] = TileType::WALL;
+        level[Pos { x: *x, y: *y }] = TileType::WALL;
     }
 
     world.add_resource(level);
 
     world
         .create_entity()
-        .with(IsPlayer)
-        .with(Pos {
-            x: MAP_DIM.x / 2,
-            y: MAP_DIM.y / 2,
-        }).with(IsVisible {
-            color: RED,
-            display_char: '@',
-        }).build();
+        .is_player()
+        .with_actor_components(
+            '@', RED, Pos {
+                x: MAP_DIM.x / 2,
+                y: MAP_DIM.y / 2,
+            }).build();
 
     world
         .create_entity()
-        .with(Pos {
-            x: MAP_DIM.x / 2 - 5,
-            y: MAP_DIM.y / 2,
-        }).with(IsVisible {
-            color: YELLOW,
-            display_char: '@',
-        }).build();
+        .with_actor_components(
+            '@', YELLOW, Pos {
+                x: MAP_DIM.x / 2 - 5,
+                y: MAP_DIM.y / 2,
+            }).build();
 
     let mut renderer = render_console();
 

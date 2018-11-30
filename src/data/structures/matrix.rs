@@ -1,14 +1,15 @@
-use specs::prelude::*;
-use specs_derive::*;
 use std::iter::Enumerate;
 use std::ops::Index;
 use std::ops::IndexMut;
 use std::slice::Iter;
 
+use specs::prelude::*;
+use specs_derive::*;
+
 pub type DimIndex = u16;
 type InternalIndex = usize;
 
-#[derive(Debug, PartialEq, Clone, Component)]
+#[derive(Debug, PartialEq, Copy, Clone, Component, Eq, Hash)]
 pub struct Pos {
     pub x: DimIndex,
     pub y: DimIndex,
@@ -32,12 +33,12 @@ impl<T> Matrix<T> {
         let y: DimIndex = (i / self.width as InternalIndex) as DimIndex;
         Pos { x, y }
     }
-    fn to_index(&self, pos: &Pos) -> InternalIndex {
-        assert!(self.is_valid(&pos));
+    fn to_index(&self, pos: Pos) -> InternalIndex {
+        assert!(self.is_valid(pos));
         (pos.x + pos.y * self.width).into()
     }
 
-    fn is_valid(&self, p: &Pos) -> bool {
+    pub fn is_valid(&self, p: Pos) -> bool {
         p.x < self.width && p.y < self.height
     }
 
@@ -72,17 +73,17 @@ impl<T: Default> Matrix<T> {
     }
 }
 
-impl<'a, T> Index<&'a Pos> for Matrix<T> {
+impl<'a, T> Index<Pos> for Matrix<T> {
     type Output = T;
 
-    fn index(&self, pos: &Pos) -> &T {
+    fn index(&self, pos: Pos) -> &T {
         let i = self.to_index(pos);
         &self.data[i]
     }
 }
 
-impl<'a, T> IndexMut<&'a Pos> for Matrix<T> {
-    fn index_mut(&mut self, p: &Pos) -> &mut T {
+impl<'a, T> IndexMut<Pos> for Matrix<T> {
+    fn index_mut(&mut self, p: Pos) -> &mut T {
         let i = self.to_index(p);
         &mut self.data[i]
     }
@@ -106,8 +107,9 @@ impl<'a, T> Iterator for MatrixIter<'a, T> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use quickcheck::*;
+
+    use super::*;
 
     impl<T: 'static + Default + Clone + Send> Arbitrary for Matrix<T> {
         fn arbitrary<G: Gen>(g: &mut G) -> Self {
@@ -143,9 +145,9 @@ mod test {
         }
 
         fn pos_to_index(pos: Pos, m: Matrix<bool>) -> TestResult {
-            if m.is_valid(&pos) {
+            if m.is_valid(pos) {
                 TestResult::from_bool(
-                    pos == m.to_pos(m.to_index(&pos))
+                    pos == m.to_pos(m.to_index(pos))
                 )
             } else {
                 TestResult::discard()
@@ -153,9 +155,9 @@ mod test {
         }
 
         fn index_by_pos(pos: Pos, m: Matrix<bool>) -> TestResult {
-            if m.is_valid(&pos) {
+            if m.is_valid(pos) {
                 TestResult::from_bool(
-                    m[&pos] == bool::default()
+                    m[pos] == bool::default()
                 )
             } else {
                 TestResult::discard()
@@ -163,12 +165,12 @@ mod test {
         }
 
         fn mut_index_by_pos(pos: Pos, m: Matrix<bool>) -> TestResult {
-            if m.is_valid(&pos) {
+            if m.is_valid(pos) {
                 let mut m = m;
                 let new_value = !bool::default();
-                m[&pos] = new_value;
+                m[pos] = new_value;
                 TestResult::from_bool(
-                    m[&pos] == new_value
+                    m[pos] == new_value
                 )
             } else {
                 TestResult::discard()

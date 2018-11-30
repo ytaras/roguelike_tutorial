@@ -8,6 +8,24 @@ pub enum TileType {
     GROUND,
 }
 
+pub trait CellObject {
+    fn is_walkable(&self) -> bool;
+    fn blocks_sight(&self) -> bool;
+}
+
+impl CellObject for TileType {
+    fn is_walkable(&self) -> bool {
+        match self {
+            TileType::WALL => false,
+            _ => true,
+        }
+    }
+
+    fn blocks_sight(&self) -> bool {
+        unimplemented!()
+    }
+}
+
 impl Default for TileType {
     fn default() -> Self {
         TileType::GROUND
@@ -19,14 +37,15 @@ pub struct LevelInfo {
     data: Matrix<TileType>,
 }
 
-impl<'a> Index<&'a Pos> for LevelInfo {
+impl<'a> Index<Pos> for LevelInfo {
     type Output = TileType;
-    fn index(&self, i: &Pos) -> &TileType {
+    fn index(&self, i: Pos) -> &TileType {
         &self.data[i]
     }
 }
-impl<'a> IndexMut<&'a Pos> for LevelInfo {
-    fn index_mut(&mut self, i: &Pos) -> &mut TileType {
+
+impl<'a> IndexMut<Pos> for LevelInfo {
+    fn index_mut(&mut self, i: Pos) -> &mut TileType {
         &mut self.data[i]
     }
 }
@@ -52,5 +71,9 @@ impl LevelInfo {
 
     pub fn all_cells(&self) -> MatrixIter<TileType> {
         self.data.iter()
+    }
+
+    pub fn is_valid(&self, p: Pos) -> bool {
+        self.data.is_valid(p)
     }
 }

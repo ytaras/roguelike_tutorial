@@ -1,4 +1,4 @@
-use doryen_rs::{Console, DoryenApi};
+use doryen_rs::Console;
 use specs::prelude::*;
 
 use data::components::*;
@@ -20,15 +20,15 @@ impl<'a> System<'a> for DoryenRenderer<'a> {
         use specs::Join;
         let con = &mut self.doryen_api;
         for (pos, vis) in li.all_cells() {
-            render(*con, &pos, vis);
+            render(*con, pos, vis);
         }
         for (pos, vis) in (&pos, &vis).join() {
-            render(*con, &pos, vis);
+            render(*con, *pos, vis);
         }
     }
 }
 
-fn render<T: Renderable>(con: &mut Console, pos: &Pos, r: &T) {
-    con.ascii(pos.x as i32, pos.y as i32, r.display_char() as u16);
-    con.fore(pos.x as i32, pos.y as i32, r.color());
+fn render<T: Renderable>(con: &mut Console, pos: Pos, r: &T) {
+    con.ascii(i32::from(pos.x), i32::from(pos.y), r.display_char() as u16);
+    con.fore(i32::from(pos.x), i32::from(pos.y), r.color());
 }

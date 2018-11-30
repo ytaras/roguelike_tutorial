@@ -9,6 +9,7 @@ specs="*"
 specs-derive="*"
 ansi_term="*"
 itertools="*"
+shred="*"
 
 [dev-dependencies]
 quickcheck="*"

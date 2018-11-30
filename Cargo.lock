@@ -856,6 +856,7 @@ dependencies = [
  "doryen-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "itertools 0.7.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "quickcheck 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "shred 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "specs 0.14.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "specs-derive 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
