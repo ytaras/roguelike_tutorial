@@ -4,7 +4,7 @@ rust:
 - 1.30.0  # Oldest supported
 - stable
 # - beta
-# - nightly
+- nightly
 matrix:
   include:
   - env: RUSTFMT
@@ -19,6 +19,12 @@ matrix:
     - cargo install cargo-kcov
     script:
     - cargo kcov
+  - env: RUSTCOV
+    rust: nightly
+    install:
+    - RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
+    script:
+    - cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
 os:
 - linux
 # - osx
