@@ -5,6 +5,7 @@ rust:
 # - beta
 - nightly
 matrix:
+  fast_finish: true
   allow_failures:
     - env: RUSTKCOV
   include:
@@ -24,7 +25,7 @@ matrix:
   - env: RUSTCOV
     rust: nightly
     install:
-    - cargo tarpaulin -version || RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
+    - cargo tarpaulin --version || RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
     script:
     - cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
   - env: CLIPPY
