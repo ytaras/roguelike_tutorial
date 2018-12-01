@@ -2,7 +2,7 @@ sudo: false
 language: rust
 rust:
 - 1.30.0  # Oldest supported
-# - stable
+- stable
 # - beta
 # - nightly
 matrix:
