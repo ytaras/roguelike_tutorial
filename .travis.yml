@@ -13,6 +13,13 @@ matrix:
     - rustup component add rustfmt-preview
     script:
     - cargo fmt -- --check
+  include:
+  - env: RUSTCOV
+    rust: 1.30.0
+    install:
+    - cargo install cargo-kcov
+    script:
+    - cargo kcov
 os:
 - linux
 # - osx
