@@ -17,6 +17,7 @@ matrix:
     rust: 1.30.0
     install:
     - cargo install cargo-kcov
+    - cargo kcov --print-install-kcov-sh | sh
     script:
     - cargo kcov
   - env: RUSTCOV
