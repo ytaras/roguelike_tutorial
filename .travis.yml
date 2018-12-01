@@ -1,20 +1,50 @@
+sudo: required
 language: rust
 rust:
- - stable
- - beta
- - nightly
+- stable
+# - beta
+- nightly
 matrix:
+  fast_finish: true
   allow_failures:
-    - rust: nightly
-before_cache: |
-  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
-    RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
-  fi
-cache: cargo
-before_script:
-  - rustup component add clippy-preview
+    - env: RUSTKCOV
+  include:
+  - env: RUSTFMT
+    rust: stable
+    install:
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt -- --check
+  - env: RUSTKCOV
+    rust: stable
+    install:
+    - cargo kcov --version || cargo install cargo-kcov
+    - cargo kcov --print-install-kcov-sh | sh
+    script:
+    - cargo kcov
+  - env: RUSTCOV
+    rust: nightly
+    install:
+    - cargo tarpaulin --version || RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
+    script:
+    - cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+  - env: CLIPPY
+    rust: nightly
+    install:
+      - rustup component add clippy-preview
+      - cargo clippy --all-features
+
+os:
+- linux
+# - osx
+# - windows
+
+install:
+- if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install windows-sdk-10.0; fi # windows workaround (for now)
+
 script:
-  - cargo clippy --all-features
-  - cargo test
-  - ./ci/bench.sh
-  - ./ci/coverage.sh
+- cargo check --verbose
+- cargo test --verbose
+
+cache:
+  cargo: true
