@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 language: rust
 rust:
 - 1.30.0  # Oldest supported
@@ -16,7 +16,7 @@ matrix:
   - env: RUSTCOV
     rust: 1.30.0
     install:
-    - cargo install cargo-kcov
+    - cargo kcov --version || cargo install cargo-kcov
     - cargo kcov --print-install-kcov-sh | sh
     script:
     - cargo kcov
