@@ -15,19 +15,13 @@ matrix:
     - rustup component add rustfmt-preview
     script:
     - cargo fmt -- --check
-  - env: RUSTKCOV
-    rust: stable
-    install:
-    - cargo kcov --version || cargo install cargo-kcov
-    - cargo kcov --print-install-kcov-sh | sh
-    script:
-    - cargo kcov
   - env: RUSTCOV
     rust: nightly
     install:
     - cargo tarpaulin --version || RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
     script:
     - cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+    - cargo tarpaulin --out Xml && bash <(curl -s https://codecov.io/bash)
   - env: CLIPPY
     rust: nightly
     install:
