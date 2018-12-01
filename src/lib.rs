@@ -1,9 +1,8 @@
 extern crate ansi_term;
 extern crate doryen_rs;
-#[macro_use]
+#[cfg_attr(test, macro_use)]
 extern crate itertools;
 #[cfg(test)]
-#[macro_use]
 extern crate quickcheck;
 extern crate shred;
 extern crate specs;
