@@ -1,20 +1,22 @@
+sudo: false
 language: rust
 rust:
- - stable
- - beta
- - nightly
-matrix:
-  allow_failures:
-    - rust: nightly
-before_cache: |
-  if [[ "$TRAVIS_RUST_VERSION" == nightly ]]; then
-    RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
-  fi
-cache: cargo
-before_script:
-  - rustup component add clippy-preview
+- 1.22.0  # Oldest supported
+- stable
+- beta
+- nightly
+
+os:
+- linux
+- osx
+- windows
+
+install:
+- if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install windows-sdk-10.0; fi # windows workaround (for now)
+
 script:
-  - cargo clippy --all-features
-  - cargo test
-  - ./ci/bench.sh
-  - ./ci/coverage.sh
+- cargo check --verbose
+- cargo test --verbose
+
+cache:
+  cargo: true
