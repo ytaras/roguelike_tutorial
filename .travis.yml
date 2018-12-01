@@ -13,6 +13,7 @@ before_cache: |
 cache: cargo
 before_script:
   - rustup component add clippy-preview
+  - cargo install kcov
 script:
   - cargo clippy --all-features
   - cargo test
