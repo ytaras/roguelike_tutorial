@@ -54,11 +54,6 @@ fn main() {
             },
         ).build();
 
-    let mut renderer = render_console();
-
-    use specs::RunNow;
-
-    renderer.run_now(&world.res);
     let mut app = App::new(AppOptions {
         console_width: CONSOLE_DIM.x.into(),
         console_height: CONSOLE_DIM.y.into(),

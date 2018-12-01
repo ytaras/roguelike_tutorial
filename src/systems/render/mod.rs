@@ -3,12 +3,7 @@ use doryen_rs::Console;
 use data::components::IsVisible;
 use data::structures::TileType;
 
-mod console;
 mod doryen;
-
-pub fn render_console() -> console::StdoutRender {
-    console::StdoutRender
-}
 
 pub fn render_doryen(doryen_api: &mut Console) -> doryen::DoryenRenderer {
     doryen::DoryenRenderer { doryen_api }

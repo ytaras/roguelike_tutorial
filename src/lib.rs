@@ -1,4 +1,3 @@
-extern crate ansi_term;
 extern crate doryen_rs;
 #[cfg_attr(test, macro_use)]
 extern crate itertools;
