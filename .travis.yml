@@ -2,14 +2,14 @@ sudo: false
 language: rust
 rust:
 - 1.30.0  # Oldest supported
-- stable
-- beta
-- nightly
+# - stable
+# - beta
+# - nightly
 
 os:
 - linux
-- osx
-- windows
+# - osx
+# - windows
 
 install:
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install windows-sdk-10.0; fi # windows workaround (for now)
