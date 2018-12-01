@@ -26,7 +26,7 @@ matrix:
     install:
     - RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin
     script:
-    - cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+    - cargo tarpaulin -version || cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
   - env: CLIPPY
     rust: nightly
     install:
