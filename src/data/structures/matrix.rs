@@ -106,7 +106,7 @@ impl<'a, T> Iterator for MatrixIter<'a, T> {
 }
 
 #[cfg(test)]
-mod test {
+pub mod test {
     use quickcheck::*;
 
     use super::*;

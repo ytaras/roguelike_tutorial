@@ -3,6 +3,7 @@ use std::convert::From;
 pub use self::level_data::*;
 pub use self::matrix::{DimIndex, Pos};
 
+pub mod generation;
 mod level_data;
 mod matrix;
 

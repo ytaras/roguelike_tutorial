@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 
 use data::structures::matrix::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TileType {
     WALL,
     GROUND,
@@ -28,7 +28,7 @@ impl CellObject for TileType {
 
 impl Default for TileType {
     fn default() -> Self {
-        TileType::GROUND
+        TileType::WALL
     }
 }
 
