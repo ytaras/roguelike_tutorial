@@ -21,7 +21,7 @@ pub fn level_one() -> LevelInfo {
         },
     );
     let mut res = LevelInfo::new(MAP_DIM.x, MAP_DIM.y);
-    room1.dig(&mut res.data);
-    room2.dig(&mut res.data);
+    room1.dig(&mut res);
+    room2.dig(&mut res);
     res
 }

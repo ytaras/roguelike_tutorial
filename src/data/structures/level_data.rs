@@ -34,7 +34,7 @@ impl Default for TileType {
 
 #[derive(Debug, Default)]
 pub struct LevelInfo {
-    pub data: Matrix<TileType>,
+    data: Matrix<TileType>,
 }
 
 impl<'a> Index<Pos> for LevelInfo {

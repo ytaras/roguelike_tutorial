@@ -1,6 +1,7 @@
 use data::structures::matrix::*;
 use data::structures::*;
 use std::cmp::{max, min};
+use std::ops::{Index, IndexMut};
 
 #[derive(Clone, Debug)]
 pub struct Room {
@@ -9,7 +10,10 @@ pub struct Room {
 }
 
 impl Room {
-    pub fn dig(&self, level: &mut Matrix<TileType>) {
+    pub fn dig<T>(&self, level: &mut T)
+    where
+        T: IndexMut<Pos> + Index<Pos, Output = TileType>,
+    {
         for x in self.corner1.x..=(self.corner2.x) {
             for y in self.corner1.y..=(self.corner2.y) {
                 level[Pos { x, y }] = TileType::GROUND;
@@ -40,7 +44,6 @@ impl Room {
 #[cfg(test)]
 mod test {
     use super::*;
-    use data::structures::matrix::test::*;
     use quickcheck::*;
 
     impl Arbitrary for Room {
@@ -80,7 +83,7 @@ mod test {
                     } else {
                         TileType::WALL
                     };
-                    assert_eq!(expected_type, m[pos]);
+                    assert_eq!(&expected_type, tile);
                 }
                 TestResult::passed()
             } else {
