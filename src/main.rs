@@ -7,12 +7,12 @@ use specs::prelude::*;
 
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
+use rogue_tutorial::levels::*;
 use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::GameWorld;
 
 type Dim = Pos;
 
-const MAP_DIM: Dim = Dim { x: 90, y: 45 };
 const CONSOLE_DIM: Dim = Dim { x: 90, y: 50 };
 
 fn main() {
@@ -23,13 +23,7 @@ fn main() {
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
 
-    let mut level = LevelInfo::with_dim(MAP_DIM);
-
-    for (x, y) in &[(30, 29), (30, 30), (30, 31)] {
-        level[Pos { x: *x, y: *y }] = TileType::WALL;
-    }
-
-    world.add_resource(level);
+    let level = level_one();
 
     world
         .create_entity()
@@ -38,8 +32,8 @@ fn main() {
             '@',
             RED,
             Pos {
-                x: MAP_DIM.x / 2,
-                y: MAP_DIM.y / 2,
+                x: level.width() / 2,
+                y: level.height() / 2,
             },
         ).build();
 
@@ -49,10 +43,12 @@ fn main() {
             '@',
             YELLOW,
             Pos {
-                x: MAP_DIM.x / 2 - 5,
-                y: MAP_DIM.y / 2,
+                x: level.width() / 2 - 5,
+                y: level.height() / 2,
             },
         ).build();
+
+    world.add_resource(level);
 
     let mut app = App::new(AppOptions {
         console_width: CONSOLE_DIM.x.into(),

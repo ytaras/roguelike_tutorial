@@ -9,7 +9,7 @@ pub struct Room {
 }
 
 impl Room {
-    fn dig(&self, level: &mut Matrix<TileType>) {
+    pub fn dig(&self, level: &mut Matrix<TileType>) {
         for x in self.corner1.x..=(self.corner2.x) {
             for y in self.corner1.y..=(self.corner2.y) {
                 level[Pos { x, y }] = TileType::GROUND;
@@ -17,14 +17,14 @@ impl Room {
         }
     }
 
-    fn contains(&self, p: Pos) -> bool {
+    pub fn contains(&self, p: Pos) -> bool {
         p.x >= self.corner1.x
             && p.x <= self.corner2.x
             && p.y >= self.corner1.y
             && p.y <= self.corner2.y
     }
 
-    fn new(pos1: Pos, pos2: Pos) -> Self {
+    pub fn new(pos1: Pos, pos2: Pos) -> Self {
         let corner1 = Pos {
             x: min(pos1.x, pos2.x),
             y: min(pos1.y, pos2.y),
