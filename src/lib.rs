@@ -3,6 +3,8 @@ extern crate doryen_rs;
 extern crate itertools;
 #[cfg(test)]
 extern crate quickcheck;
+#[cfg(test)]
+extern crate rand;
 extern crate shred;
 extern crate specs;
 extern crate specs_derive;

@@ -83,5 +83,14 @@ fn bench_large_hash(b: &mut Bencher) {
     });
 }
 
+#[bench]
+fn bench_matrix_creation(b: &mut Bencher) {
+    let h = 1000;
+    let w = 1000;
+
+    b.iter(|| {
+        let _: data::structures::matrix::Matrix<bool> = data::structures::matrix::Matrix::new(h, w);
+    });
+}
 #[derive(Component)]
 struct Data(u16);

@@ -1,7 +1,9 @@
+use std::cmp::{max, min};
+use std::ops::Range;
+use std::ops::{Index, IndexMut};
+
 use data::structures::matrix::*;
 use data::structures::*;
-use std::cmp::{max, min};
-use std::ops::{Index, IndexMut};
 
 #[derive(Clone, Debug)]
 pub struct Room {
@@ -14,10 +16,8 @@ impl Room {
     where
         T: IndexMut<Pos> + Index<Pos, Output = TileType>,
     {
-        for x in self.corner1.x..=(self.corner2.x) {
-            for y in self.corner1.y..=(self.corner2.y) {
-                level[Pos { x, y }] = TileType::GROUND;
-            }
+        for p in self.iter_pos() {
+            level[p] = TileType::GROUND;
         }
     }
 
@@ -29,6 +29,7 @@ impl Room {
     }
 
     pub fn new(pos1: Pos, pos2: Pos) -> Self {
+        assert_ne!(pos1, pos2);
         let corner1 = Pos {
             x: min(pos1.x, pos2.x),
             y: min(pos1.y, pos2.y),
@@ -39,25 +40,67 @@ impl Room {
         };
         Room { corner1, corner2 }
     }
+
+    fn with_dim(start: Pos, dim: Pos) -> Self {
+        Room::new(
+            start,
+            Pos {
+                x: start.x + dim.x,
+                y: start.y + dim.y,
+            },
+        )
+    }
+}
+
+impl PosCollection for Room {
+    type Iter = <Range<Pos> as PosCollection>::Iter;
+
+    fn iter_pos(&self) -> <Self as PosCollection>::Iter {
+        let range = self.corner1..self.corner2;
+        range.iter_pos()
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use quickcheck::*;
 
-    impl Arbitrary for Room {
+    use super::*;
+    use data::structures::matrix::test::random_pos;
+    #[derive(Clone, Debug)]
+    struct LevelAndRoom {
+        level: Matrix<TileType>,
+        room: Room,
+    }
+    impl Arbitrary for LevelAndRoom {
         fn arbitrary<G>(gen: &mut G) -> Self
         where
             G: Gen,
         {
-            let (corner1, corner2) = <(Pos, Pos)>::arbitrary(gen);
-            Room::new(corner1, corner2)
+            let level: Matrix<TileType> = Arbitrary::arbitrary(gen);
+            let corner1 = random_pos(&level, gen);
+            let corner2 = random_pos(&level, gen);
+            LevelAndRoom {
+                level,
+                room: Room::new(corner1, corner2),
+            }
         }
-        fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
-            let shrinker = (self.corner1, self.corner2).shrink();
-            let iter = shrinker.map(|(corner1, corner2)| Room { corner1, corner2 });
-            Box::new(iter)
+    }
+
+    #[test]
+    fn check_dig() {
+        let mut m: Matrix<TileType> = Matrix::new(1, 1);
+        let room = Room::with_dim(Pos { x: 0, y: 0 }, Pos { x: 1, y: 1 });
+
+        room.dig(&mut m);
+
+        for (pos, tile) in m.iter() {
+            let expected_type = if room.contains(pos) {
+                TileType::GROUND
+            } else {
+                TileType::WALL
+            };
+            assert_eq!(&expected_type, tile);
         }
     }
 
@@ -73,22 +116,21 @@ mod test {
             true
         }
 
-        fn dig_in_map(m: Matrix<TileType>, room: Room) -> TestResult {
-            if m.is_valid(room.corner1) && m.is_valid(room.corner2) {
-                let mut m = m;
-                room.dig(&mut m);
+        fn dig_in_map(lr: LevelAndRoom) -> TestResult {
+                let mut m = lr.level;
+                lr.room.dig(&mut m);
                 for (pos, tile) in m.iter() {
-                    let expected_type = if room.contains(pos) {
+                    let expected_type = if lr.room.contains(pos) {
                         TileType::GROUND
                     } else {
                         TileType::WALL
                     };
-                    assert_eq!(&expected_type, tile);
+                    if &expected_type != tile {
+                        return TestResult::failed();
+                    }
                 }
                 TestResult::passed()
-            } else {
-            TestResult::discard()
-            }
+
         }
     }
 }
