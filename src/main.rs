@@ -17,7 +17,7 @@ const CONSOLE_DIM: Dim = Dim { x: 90, y: 50 };
 
 fn main() {
     let mut world = World::new();
-    world.register::<Pos>();
+    world.register::<HasPos>();
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();

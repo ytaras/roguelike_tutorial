@@ -3,17 +3,9 @@ use std::ops::Index;
 use std::ops::IndexMut;
 use std::slice::Iter;
 
-use specs::prelude::*;
-use specs_derive::*;
+pub use super::pos::*;
 
-pub type DimIndex = u8;
 type InternalIndex = usize;
-
-#[derive(Debug, PartialEq, Copy, Clone, Component, Eq, Hash)]
-pub struct Pos {
-    pub x: DimIndex,
-    pub y: DimIndex,
-}
 
 #[derive(Debug, Clone, Default)]
 pub struct Matrix<T> {
@@ -104,7 +96,9 @@ impl<'a, T> Iterator for MatrixIter<'a, T> {
 #[cfg(test)]
 mod test {
     use std::fmt::Debug;
+
     use proptest::prelude::*;
+
     use super::*;
 
     impl<T: Debug + Default + Clone> Arbitrary for Matrix<T> {

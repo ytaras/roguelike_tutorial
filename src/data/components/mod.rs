@@ -46,3 +46,6 @@ impl PlansExecuting {
         PlansExecuting(ac)
     }
 }
+
+#[derive(Component, PartialEq, Eq, Hash, Debug)]
+pub struct HasPos(pub Pos);

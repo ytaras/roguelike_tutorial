@@ -10,7 +10,7 @@ pub trait RichEntityBuilder {
 
 impl<'a> RichEntityBuilder for EntityBuilder<'a> {
     fn with_actor_components(self, display_char: char, color: Color, pos: Pos) -> Self {
-        self.with(pos)
+        self.with(HasPos(pos))
             .with(IsVisible {
                 color,
                 display_char,
