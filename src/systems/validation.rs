@@ -5,7 +5,6 @@ use common::query::*;
 use common::validations::Validation;
 use data::components::*;
 use data::structures::{CellObject, Dir, LevelInfo};
-use data::structures::Pos;
 
 #[derive(Debug, Default)]
 pub struct MoveValidation;
@@ -40,6 +39,7 @@ mod tests {
     use data::components::*;
     use data::structures::{E, S};
     use data::structures::LevelInfo;
+    use data::structures::Pos;
     use data::structures::TileType::*;
     use systems::render::YELLOW;
 

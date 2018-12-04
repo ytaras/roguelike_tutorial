@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+xs 3776052596 1997751340 1329702492 417344676 # shrinks to from = Pos { x: 0, y: 0 }, to = Pos { x: 0, y: 0 }
+xs 3729677037 1259315221 158653029 3377339108 # shrinks to from = Pos { x: 0, y: 9 }, to = Pos { x: 1, y: 0 }
