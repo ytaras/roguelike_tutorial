@@ -7,13 +7,14 @@ use specs::prelude::*;
 
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
+use rogue_tutorial::levels::level_1;
 use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::GameWorld;
 
-type Dim = Pos;
-
-const MAP_DIM: Dim = Dim { x: 90, y: 45 };
-const CONSOLE_DIM: Dim = Dim { x: 90, y: 50 };
+const CONSOLE_DIM: Dim = Dim {
+    width: 90,
+    height: 50,
+};
 
 fn main() {
     let mut world = World::new();
@@ -23,42 +24,32 @@ fn main() {
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
 
-    let mut level = LevelInfo::with_dim(MAP_DIM);
-
-    for (x, y) in &[(30, 29), (30, 30), (30, 31)] {
-        level[Pos { x: *x, y: *y }] = TileType::WALL;
-    }
+    let level = level_1();
+    let player_pos = Pos {
+        x: level.width() / 2,
+        y: level.height() / 2,
+    };
 
     world.add_resource(level);
 
     world
         .create_entity()
         .is_player()
-        .with_actor_components(
-            '@',
-            RED,
-            Pos {
-                x: MAP_DIM.x / 2,
-                y: MAP_DIM.y / 2,
-            },
-        ).build();
+        .with_actor_components('@', RED, player_pos)
+        .build();
 
+    let mut npc_pos = player_pos;
+    npc_pos.x -= 5;
     world
         .create_entity()
-        .with_actor_components(
-            '@',
-            YELLOW,
-            Pos {
-                x: MAP_DIM.x / 2 - 5,
-                y: MAP_DIM.y / 2,
-            },
-        ).build();
+        .with_actor_components('@', YELLOW, npc_pos)
+        .build();
 
     let mut app = App::new(AppOptions {
-        console_width: CONSOLE_DIM.x.into(),
-        console_height: CONSOLE_DIM.y.into(),
-        screen_width: CONSOLE_DIM.x as u32 * 8,
-        screen_height: CONSOLE_DIM.y as u32 * 8,
+        console_width: CONSOLE_DIM.width.into(),
+        console_height: CONSOLE_DIM.height.into(),
+        screen_width: CONSOLE_DIM.width as u32 * 8,
+        screen_height: CONSOLE_DIM.height as u32 * 8,
         window_title: "my roguelike".to_owned(),
         font_path: "terminal_8x8.png".to_owned(),
         vsync: true,

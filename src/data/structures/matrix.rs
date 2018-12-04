@@ -49,6 +49,13 @@ impl<T> Matrix<T> {
             matrix: self,
         }
     }
+
+    pub fn dim(&self) -> Dim {
+        Dim {
+            width: self.width,
+            height: self.height,
+        }
+    }
 }
 
 impl<T: Default + Clone> Matrix<T> {
@@ -193,18 +200,18 @@ mod test {
         }
 
         #[test]
-        fn iter_pos(m: Matrix<bool>) {
-            let positions = m.iter_pos().collect::<Vec<_>>();
+        fn iter_pos_has_only_unique(m: Matrix<bool>) {
+            let iter = m.iter();
+            let positions_count = m.iter_pos().count();
+            let expected_count = m.width as InternalIndex * m.height as InternalIndex;
+            prop_assert_eq!(expected_count, positions_count);
+            let expected_pairs = iproduct!(0..m.width, 0..m.height) .map(|(x, y)| Pos {x , y});
+            assert_equal(expected_pairs, m.iter_pos());
+        }
 
-            let expected_size = m.width as InternalIndex * m.height as InternalIndex;
-            prop_assert_eq!(expected_size, positions.len(), "Expected {:?} to have {} items",
-               positions,
-               expected_size);
-
-            let unique_results = m.iter_pos().unique().collect::<Vec<_>>();
-            prop_assert_eq!(&unique_results, &positions);
-
-            for p in positions {
+        #[test]
+        fn iter_pos_returs_only_valid(m: Matrix<bool>) {
+            for p in m.iter_pos() {
                 prop_assert!(m.is_valid(p));
             }
         }
