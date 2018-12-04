@@ -4,7 +4,7 @@ pub use self::level_data::*;
 pub use self::matrix::{DimIndex, Pos};
 
 mod level_data;
-mod matrix;
+pub mod matrix;
 
 #[derive(Debug)]
 pub enum GameCommand {
@@ -74,6 +74,13 @@ pub enum MoveDir {
 }
 
 impl MoveDir {
+    pub fn apply(self, i: DimIndex) -> DimIndex {
+        match self {
+            MoveDir::Minus => i - 1,
+            MoveDir::Plus => i + 1,
+            MoveDir::Zero => i,
+        }
+    }
     pub fn to_int(self) -> i8 {
         self.to_num()
     }

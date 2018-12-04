@@ -6,7 +6,7 @@ use std::slice::Iter;
 use specs::prelude::*;
 use specs_derive::*;
 
-pub type DimIndex = u16;
+pub type DimIndex = u8;
 type InternalIndex = usize;
 
 #[derive(Debug, PartialEq, Copy, Clone, Component, Eq, Hash)]
@@ -24,7 +24,7 @@ pub struct Matrix<T> {
 
 impl<T> Matrix<T> {
     fn max_pos(&self) -> InternalIndex {
-        (self.width * self.height).into()
+        self.width as InternalIndex * self.height as InternalIndex
     }
 
     fn to_pos(&self, i: InternalIndex) -> Pos {
@@ -35,7 +35,7 @@ impl<T> Matrix<T> {
     }
     fn to_index(&self, pos: Pos) -> InternalIndex {
         assert!(self.is_valid(pos));
-        (pos.x + pos.y * self.width).into()
+        pos.x as InternalIndex + pos.y as InternalIndex * self.width as InternalIndex
     }
 
     pub fn is_valid(&self, p: Pos) -> bool {
@@ -58,17 +58,13 @@ impl<T> Matrix<T> {
     }
 }
 
-impl<T: Default> Matrix<T> {
+impl<T: Default + Clone> Matrix<T> {
     pub fn new(width: DimIndex, height: DimIndex) -> Self {
-        let data_size: InternalIndex = (width * height).into();
-        let mut data = Vec::new();
-        for _ in 0..data_size {
-            data.push(T::default());
-        }
+        let data_size: InternalIndex = width as InternalIndex * height as InternalIndex;
         Matrix {
             width,
             height,
-            data,
+            data: vec![T::default(); data_size],
         }
     }
 }
@@ -107,81 +103,83 @@ impl<'a, T> Iterator for MatrixIter<'a, T> {
 
 #[cfg(test)]
 mod test {
-    use quickcheck::*;
-
     use super::*;
+    use proptest::prelude::*;
+    use std::fmt::Debug;
 
-    impl<T: 'static + Default + Clone + Send> Arbitrary for Matrix<T> {
-        fn arbitrary<G: Gen>(g: &mut G) -> Self {
-            let x = DimIndex::arbitrary(g);
-            let y = DimIndex::arbitrary(g);
-            Matrix::new(x, y)
+    impl<T: Debug + Default + Clone> Arbitrary for Matrix<T> {
+        type Parameters = ();
+        fn arbitrary_with(_args: <Self as Arbitrary>::Parameters) -> <Self as Arbitrary>::Strategy {
+            matrix(DimIndex::max_value(), DimIndex::max_value())
         }
-
-        fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
-            let shrinker = (self.width, self.height).shrink();
-            let iter = shrinker.map(|(x, y)| Matrix::new(x, y));
-            Box::new(iter)
-        }
+        type Strategy = BoxedStrategy<Matrix<T>>;
     }
 
-    impl Arbitrary for Pos {
-        fn arbitrary<G: Gen>(g: &mut G) -> Self {
-            let (x, y) = <(DimIndex, DimIndex)>::arbitrary(g);
+    fn matrix<T: Debug + Default + Clone>(
+        max_width: DimIndex,
+        max_height: DimIndex,
+    ) -> BoxedStrategy<Matrix<T>> {
+        (1..max_width, 1..max_height)
+            .prop_map(|(w, h)| Matrix::new(w, h))
+            .boxed()
+    }
+
+    prop_compose! {
+        fn pos(max_x: DimIndex, max_y: DimIndex)(x in 0..max_x, y in 0..max_y) -> Pos {
             Pos { x, y }
         }
-
-        fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
-            let shrinker = (self.x, self.y).shrink();
-            let iter = shrinker.map(|(x, y)| Pos { x, y });
-            Box::new(iter)
-        }
     }
 
-    quickcheck! {
-        fn no_overflow(m: Matrix<bool>) -> TestResult {
+    fn matrix_and_pos<T: 'static + Debug + Default + Clone>() -> BoxedStrategy<(Matrix<T>, Pos)> {
+        matrix_and_pos_limit(DimIndex::max_value(), DimIndex::max_value())
+    }
+
+    fn matrix_and_pos_limit<T: 'static + Debug + Default + Clone>(
+        max_width: DimIndex,
+        max_height: DimIndex,
+    ) -> BoxedStrategy<(Matrix<T>, Pos)> {
+        matrix(max_width, max_height)
+            .prop_flat_map(|m| {
+                let pos = pos(m.width, m.height);
+                (Just(m), pos)
+            }).boxed()
+    }
+
+    proptest! {
+        #[test]
+        fn max_pos_no_overflow(m: Matrix<bool>) {
             let _ = m.max_pos();
-            TestResult::passed()
         }
 
-        fn pos_to_index(pos: Pos, m: Matrix<bool>) -> TestResult {
-            if m.is_valid(pos) {
-                TestResult::from_bool(
-                    pos == m.to_pos(m.to_index(pos))
-                )
-            } else {
-                TestResult::discard()
+        #[test]
+        fn pos_to_index((m, pos) in matrix_and_pos::<bool>()) {
+            prop_assert_eq!(pos, m.to_pos(m.to_index(pos)))
+        }
+
+        #[test]
+        fn index_by_pos((m, pos) in matrix_and_pos::<bool>()) {
+            prop_assert_eq!(bool::default(), m[pos])
+        }
+
+
+        #[test]
+        fn mut_index_by_pos((m, pos) in matrix_and_pos::<bool>())  {
+            let mut m = m;
+            let new_value = !bool::default();
+            m[pos] = new_value;
+            prop_assert_eq!(new_value, m[pos])
+        }
+
+        #[test]
+            fn iter(m: Matrix<bool>)  {
+                let expected_pairs =
+                    iproduct!(0..m.height, 0..m.width)
+                        .map(|(y, x)| Pos {x , y})
+                        .collect::<Vec<_>>();
+                let real_pairs = m.iter()
+                    .map(|(p, _)| p)
+                    .collect::<Vec<_>>();
+                prop_assert_eq!(expected_pairs, real_pairs);
             }
-        }
-
-        fn index_by_pos(pos: Pos, m: Matrix<bool>) -> TestResult {
-            if m.is_valid(pos) {
-                TestResult::from_bool(
-                    m[pos] == bool::default()
-                )
-            } else {
-                TestResult::discard()
-            }
-        }
-
-        fn mut_index_by_pos(pos: Pos, m: Matrix<bool>) -> TestResult {
-            if m.is_valid(pos) {
-                let mut m = m;
-                let new_value = !bool::default();
-                m[pos] = new_value;
-                TestResult::from_bool(
-                    m[pos] == new_value
-                )
-            } else {
-                TestResult::discard()
-            }
-        }
-
-        fn iter(m: Matrix<bool>) -> () {
-            let expected_pairs = iproduct!(0..m.height, 0..m.width)
-            .map(|(y, x)| Pos {x ,y }).collect::<Vec<_>>();
-            let real_pairs = m.iter().map(|(p, _)| p).collect::<Vec<_>>();
-            assert_eq!(expected_pairs ,real_pairs);
-        }
     }
 }

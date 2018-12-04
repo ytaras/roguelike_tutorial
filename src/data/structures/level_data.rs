@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 
 use data::structures::matrix::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TileType {
     WALL,
     GROUND,

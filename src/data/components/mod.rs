@@ -9,9 +9,9 @@ mod builder;
 
 impl<'a> std::ops::AddAssign<&'a Dir> for &'a mut Pos {
     fn add_assign(&mut self, other: &'a Dir) {
-        // FIXME - this can have underflow
-        self.x = (self.x as i8 + other.ew.to_int()) as DimIndex;
-        self.y = (self.y as i8 + other.ns.to_int()) as DimIndex;
+        let o = **self + *other;
+        self.x = o.x;
+        self.y = o.y;
     }
 }
 
@@ -19,8 +19,8 @@ impl<'a> std::ops::Add<Dir> for Pos {
     type Output = Pos;
 
     fn add(self, other: Dir) -> Pos {
-        let x: DimIndex = (self.x as i8 + other.ew.to_int()) as u16;
-        let y: DimIndex = (self.y as i8 + other.ns.to_int()) as u16;
+        let x: DimIndex = other.ew.apply(self.x);
+        let y: DimIndex = other.ns.apply(self.y);
         Pos { x, y }
     }
 }
