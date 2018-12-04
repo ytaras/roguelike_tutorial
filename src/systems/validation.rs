@@ -48,6 +48,8 @@ mod tests {
     fn create_world(add_wall: bool) -> World {
         let mut w = World::new();
         let mut level = LevelInfo::new(1, 2);
+        level[Pos { x: 0, y: 0 }] = GROUND;
+        level[Pos { x: 0, y: 1 }] = GROUND;
         if add_wall {
             level[Pos { x: 0, y: 1 }] = WALL;
         }

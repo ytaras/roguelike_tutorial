@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+xs 3442697841 2691041321 860029155 1310150990 # shrinks to room = Room { from: Pos { x: 1, y: 2 }, to: Pos { x: 2, y: 254 } }
+xs 3190403260 225814116 3949876919 1320660660 # shrinks to (mut level, corridor) = (LevelInfo { data: Matrix { width: 4, height: 4, data: [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL] } }, LCorridor { from: Pos { x: 0, y: 0 }, to: Pos { x: 1, y: 0 }, horizontal_first: true })

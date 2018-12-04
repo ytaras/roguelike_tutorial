@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 
 use data::structures::matrix::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TileType {
     WALL,
     GROUND,
@@ -22,17 +22,20 @@ impl CellObject for TileType {
     }
 
     fn blocks_sight(&self) -> bool {
-        unimplemented!()
+        match self {
+            TileType::WALL => true,
+            _ => false,
+        }
     }
 }
 
 impl Default for TileType {
     fn default() -> Self {
-        TileType::GROUND
+        TileType::WALL
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct LevelInfo {
     data: Matrix<TileType>,
 }
@@ -50,15 +53,25 @@ impl<'a> IndexMut<Pos> for LevelInfo {
     }
 }
 
+impl PosCollection for LevelInfo {
+    type Iter = <Matrix<TileType> as PosCollection>::Iter;
+
+    fn iter_pos(&self) -> Self::Iter {
+        self.data.iter_pos()
+    }
+}
+
 impl LevelInfo {
     pub fn new(width: DimIndex, height: DimIndex) -> Self {
-        LevelInfo {
-            data: Matrix::new(width, height),
-        }
+        Self::from_matrix(Matrix::new(width, height))
     }
 
-    pub fn with_dim(dim: Pos) -> Self {
-        Self::new(dim.x, dim.y)
+    pub fn from_matrix(data: Matrix<TileType>) -> Self {
+        LevelInfo { data }
+    }
+
+    pub fn with_dim(dim: Dim) -> Self {
+        Self::new(dim.width, dim.height)
     }
 
     pub fn width(&self) -> DimIndex {
@@ -75,5 +88,9 @@ impl LevelInfo {
 
     pub fn is_valid(&self, p: Pos) -> bool {
         self.data.is_valid(p)
+    }
+
+    pub fn dim(&self) -> Dim {
+        self.data.dim()
     }
 }

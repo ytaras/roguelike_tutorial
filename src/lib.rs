@@ -10,5 +10,6 @@ extern crate specs_derive;
 
 pub mod common;
 pub mod data;
+pub mod levels;
 pub mod systems;
 pub mod ui;

@@ -3,10 +3,16 @@ use std::ops::RangeInclusive;
 
 pub type DimIndex = u8;
 
-#[derive(Debug, PartialEq, Copy, Clone, Eq, Hash)]
+#[derive(Debug, PartialEq, Copy, Clone, Eq, Hash, PartialOrd, Ord)]
 pub struct Pos {
     pub x: DimIndex,
     pub y: DimIndex,
+}
+
+#[derive(Debug)]
+pub struct Dim {
+    pub width: DimIndex,
+    pub height: DimIndex,
 }
 
 pub struct PosRange {
@@ -90,6 +96,11 @@ mod test {
 
         type Strategy = BoxedStrategy<Pos>;
     }
+    fn pos_in_dim(d: Dim) -> BoxedStrategy<Pos> {
+        (0..d.width, 0..d.height)
+            .prop_map(|(x, y)| Pos { x, y })
+            .boxed()
+    }
 
     prop_compose! {
         fn arb_pos()(x: DimIndex, y: DimIndex) -> Pos {
@@ -98,6 +109,14 @@ mod test {
     }
 
     proptest! {
+        #[test]
+        fn pos_range_inclusive_unique_only(from: Pos, to: Pos) {
+            let range = from..=to;
+            let real_count = range.iter_pos().count();
+            let unique_count = range.iter_pos().unique().count();
+            prop_assert_eq!(real_count, unique_count);
+        }
+
         #[test]
         fn pos_range_inclusive_holds(from: Pos, to: Pos) {
             let range = from..=to;
@@ -110,9 +129,6 @@ mod test {
 
              prop_assert_eq!(x_range.len() * y_range.len(), real_pairs.len());
 
-            let unique_results = range.iter_pos().unique().collect::<Vec<_>>();
-            prop_assert_eq!(&unique_results, &real_pairs);
-
             let values_are_valid = range.iter_pos().all(|p| {
                 p.x >= *x_range.start() && p.x <= *x_range.end() &&
                     p.y >= *y_range.start() && p.y <= *y_range.end()
@@ -120,6 +136,15 @@ mod test {
             prop_assert!(values_are_valid, "{:?} doesn't hold x or y invariant for {:?}",
                 &real_pairs,
                  range);
+        }
+
+
+        #[test]
+        fn pos_range_unique_only(from: Pos, to: Pos) {
+            let range = from..to;
+            let real_count = range.iter_pos().count();
+            let unique_count = range.iter_pos().unique().count();
+            prop_assert_eq!(real_count, unique_count);
         }
 
         #[test]
@@ -133,9 +158,6 @@ mod test {
             let y_range: Range<DimIndex> = DimIndex::min(from.y, to.y)..DimIndex::max(from.y, to.y);
 
              prop_assert_eq!(x_range.len() * y_range.len(), real_pairs.len());
-
-            let unique_results = range.iter_pos().unique().collect::<Vec<_>>();
-            prop_assert_eq!(&unique_results, &real_pairs);
 
             let values_are_valid = range.iter_pos().all(|p| {
                 p.x >= x_range.start && p.x < x_range.end &&
