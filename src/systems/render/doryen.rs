@@ -12,7 +12,7 @@ pub struct DoryenRenderer<'a> {
 
 impl<'a> System<'a> for DoryenRenderer<'a> {
     type SystemData = (
-        ReadStorage<'a, Pos>,
+        ReadStorage<'a, HasPos>,
         ReadStorage<'a, IsVisible>,
         Read<'a, LevelInfo>,
     );
@@ -23,7 +23,7 @@ impl<'a> System<'a> for DoryenRenderer<'a> {
             render(*con, pos, vis);
         }
         for (pos, vis) in (&pos, &vis).join() {
-            render(*con, *pos, vis);
+            render(*con, pos.0, vis);
         }
     }
 }

@@ -1,5 +1,5 @@
 extern crate doryen_rs;
-#[cfg_attr(test, macro_use)]
+#[macro_use]
 extern crate itertools;
 #[cfg(test)]
 #[macro_use]

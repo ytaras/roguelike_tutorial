@@ -50,15 +50,15 @@ fn bench_unique_query(b: &mut Bencher) {
 #[bench]
 fn bench_small_hash(b: &mut Bencher) {
     let mut w = World::new();
-    w.register::<Pos>();
+    w.register::<HasPos>();
     w.register::<Data>();
     for i in 0..100 {
         w.create_entity()
-            .with(Pos { x: i, y: i })
+            .with(HasPos(Pos { x: i, y: i }))
             .with(Data(i))
             .build();
     }
-    let s1 = &w.read_storage::<Pos>();
+    let s1 = &w.read_storage::<HasPos>();
     let s2 = &w.read_storage::<Data>();
 
     b.iter(|| {
@@ -69,15 +69,15 @@ fn bench_small_hash(b: &mut Bencher) {
 #[bench]
 fn bench_large_hash(b: &mut Bencher) {
     let mut w = World::new();
-    w.register::<Pos>();
+    w.register::<HasPos>();
     w.register::<Data>();
     for i in 0..DimIndex::max_value() {
         w.create_entity()
-            .with(Pos { x: i, y: i })
+            .with(HasPos(Pos { x: i, y: i }))
             .with(Data(i))
             .build();
     }
-    let s1 = &w.read_storage::<Pos>();
+    let s1 = &w.read_storage::<HasPos>();
     let s2 = &w.read_storage::<Data>();
 
     b.iter(|| {

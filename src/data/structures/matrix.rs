@@ -1,19 +1,12 @@
 use std::iter::Enumerate;
 use std::ops::Index;
 use std::ops::IndexMut;
+use std::ops::Range;
 use std::slice::Iter;
 
-use specs::prelude::*;
-use specs_derive::*;
+pub use super::pos::*;
 
-pub type DimIndex = u8;
 type InternalIndex = usize;
-
-#[derive(Debug, PartialEq, Copy, Clone, Component, Eq, Hash)]
-pub struct Pos {
-    pub x: DimIndex,
-    pub y: DimIndex,
-}
 
 #[derive(Debug, Clone, Default)]
 pub struct Matrix<T> {
@@ -101,11 +94,28 @@ impl<'a, T> Iterator for MatrixIter<'a, T> {
     }
 }
 
+impl<T> PosCollection for Matrix<T> {
+    type Iter = <Range<Pos> as PosCollection>::Iter;
+
+    fn iter_pos(&self) -> <Self as PosCollection>::Iter {
+        let from = Pos { x: 0, y: 0 };
+        let to = Pos {
+            x: self.width,
+            y: self.height,
+        };
+
+        (from..to).iter_pos()
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use super::*;
-    use proptest::prelude::*;
     use std::fmt::Debug;
+
+    use itertools::*;
+    use proptest::prelude::*;
+
+    use super::*;
 
     impl<T: Debug + Default + Clone> Arbitrary for Matrix<T> {
         type Parameters = ();
@@ -171,15 +181,33 @@ mod test {
         }
 
         #[test]
-            fn iter(m: Matrix<bool>)  {
-                let expected_pairs =
-                    iproduct!(0..m.height, 0..m.width)
-                        .map(|(y, x)| Pos {x , y})
-                        .collect::<Vec<_>>();
-                let real_pairs = m.iter()
-                    .map(|(p, _)| p)
+        fn iter(m: Matrix<bool>)  {
+            let expected_pairs =
+                iproduct!(0..m.height, 0..m.width)
+                    .map(|(y, x)| Pos {x , y})
                     .collect::<Vec<_>>();
-                prop_assert_eq!(expected_pairs, real_pairs);
+            let real_pairs = m.iter()
+                .map(|(p, _)| p)
+                .collect::<Vec<_>>();
+            prop_assert_eq!(expected_pairs, real_pairs);
+        }
+
+        #[test]
+        fn iter_pos(m: Matrix<bool>) {
+            let positions = m.iter_pos().collect::<Vec<_>>();
+
+            let expected_size = m.width as InternalIndex * m.height as InternalIndex;
+            prop_assert_eq!(expected_size, positions.len(), "Expected {:?} to have {} items",
+               positions,
+               expected_size);
+
+            let unique_results = m.iter_pos().unique().collect::<Vec<_>>();
+            prop_assert_eq!(&unique_results, &positions);
+
+            for p in positions {
+                prop_assert!(m.is_valid(p));
             }
+        }
+
     }
 }

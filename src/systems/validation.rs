@@ -4,7 +4,6 @@ use specs::ReadStorage;
 use common::query::*;
 use common::validations::Validation;
 use data::components::*;
-use data::structures::Pos;
 use data::structures::{CellObject, Dir, LevelInfo};
 
 #[derive(Debug, Default)]
@@ -14,7 +13,7 @@ impl<'a> Validation<'a> for MoveValidation {
     type Input = Dir;
     type Output = Option<Dir>;
     type SD = (
-        ReadStorage<'a, Pos>,
+        ReadStorage<'a, HasPos>,
         ReadStorage<'a, IsPlayer>,
         ReadStorage<'a, TakesWholeTile>,
         Read<'a, LevelInfo>,
@@ -23,11 +22,11 @@ impl<'a> Validation<'a> for MoveValidation {
     fn run(&self, move_dir: Dir, (pos_storage, pl, tile, level): Self::SD) -> Self::Output {
         let res: Option<Dir> = unique((&pos_storage, &pl))
             .unwrap()
-            .map(|(&player_pos, _)| player_pos + move_dir)
+            .map(|(ref mut player_pos, _)| player_pos.0 + move_dir)
             .filter(|new_pos| level.is_valid(*new_pos) && level[*new_pos].is_walkable())
             .filter(|new_pos| {
                 let existing_entities = hash(&pos_storage, &tile);
-                !existing_entities.contains_key(new_pos)
+                !existing_entities.contains_key(&HasPos(*new_pos))
             }).map(|_| move_dir);
         res
     }
@@ -39,6 +38,7 @@ mod tests {
 
     use data::components::*;
     use data::structures::LevelInfo;
+    use data::structures::Pos;
     use data::structures::TileType::*;
     use data::structures::{E, S};
     use systems::render::YELLOW;
@@ -55,10 +55,10 @@ mod tests {
         w.register::<IsPlayer>();
         w.register::<IsVisible>();
         w.register::<TakesWholeTile>();
-        w.register::<Pos>();
+        w.register::<HasPos>();
         w.create_entity()
             .with(IsPlayer)
-            .with(Pos { x: 0, y: 0 })
+            .with(HasPos(Pos { x: 0, y: 0 }))
             .build();
         w
     }

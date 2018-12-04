@@ -1,7 +1,9 @@
+use std::marker::PhantomData;
+
+use specs::prelude::*;
+
 use data::components::*;
 use data::structures::*;
-use specs::prelude::*;
-use std::marker::PhantomData;
 
 #[derive(Default)]
 pub struct AssertUnique<T: Component> {
@@ -21,7 +23,7 @@ pub struct ExecuteCommands;
 impl<'a> System<'a> for ExecuteCommands {
     type SystemData = (
         Entities<'a>,
-        WriteStorage<'a, Pos>,
+        WriteStorage<'a, HasPos>,
         WriteStorage<'a, PlansExecuting>,
         Read<'a, LazyUpdate>,
     );
@@ -29,6 +31,7 @@ impl<'a> System<'a> for ExecuteCommands {
         use specs::Join;
 
         for (e, mut pos, plan) in (&e, &mut pos, &mut plan_storage).join() {
+            let mut pos = &mut pos.0;
             match plan.0 {
                 ActorCommand::Move(ref dir) => {
                     pos += dir;
@@ -81,15 +84,16 @@ mod tests {
 
     mod execute_planned_commands {
         use super::*;
+
         #[test]
         fn move_moves() {
             let mut w = World::new();
-            w.register::<Pos>();
+            w.register::<HasPos>();
             w.register::<PlansExecuting>();
 
             let e = w
                 .create_entity()
-                .with(Pos { x: 1, y: 1 })
+                .with(HasPos(Pos { x: 1, y: 1 }))
                 .with(PlansExecuting::new(ActorCommand::Move(S)))
                 .build();
 
@@ -97,7 +101,10 @@ mod tests {
 
             w.maintain();
 
-            assert_eq!(w.read_storage::<Pos>().get(e), Some(&Pos { x: 1, y: 2 }));
+            assert_eq!(
+                w.read_storage::<HasPos>().get(e),
+                Some(&HasPos(Pos { x: 1, y: 2 }))
+            );
             assert_eq!(w.read_storage::<PlansExecuting>().get(e), None);
         }
     }

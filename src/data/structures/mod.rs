@@ -5,6 +5,7 @@ pub use self::matrix::{DimIndex, Pos};
 
 mod level_data;
 pub mod matrix;
+mod pos;
 
 #[derive(Debug)]
 pub enum GameCommand {
