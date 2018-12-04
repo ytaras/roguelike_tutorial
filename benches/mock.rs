@@ -11,10 +11,10 @@ use specs::prelude::*;
 use specs::RunNow;
 use specs_derive::*;
 
-use rogue_tutorial::*;
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
 use rogue_tutorial::systems::logic::*;
+use rogue_tutorial::*;
 
 const ENTITIES: u32 = 1_000_000;
 

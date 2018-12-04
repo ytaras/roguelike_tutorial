@@ -37,10 +37,10 @@ mod tests {
     use specs::{Builder, World};
 
     use data::components::*;
-    use data::structures::{E, S};
     use data::structures::LevelInfo;
     use data::structures::Pos;
     use data::structures::TileType::*;
+    use data::structures::{E, S};
     use systems::render::YELLOW;
 
     use super::*;

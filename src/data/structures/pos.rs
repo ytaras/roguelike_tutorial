@@ -28,13 +28,13 @@ impl PosRange {
         PosRange { from, to }
     }
 
-    fn iter_inclusive(self) -> impl Iterator<Item=Pos> {
+    fn iter_inclusive(self) -> impl Iterator<Item = Pos> {
         let iter =
             iproduct!(self.from.x..=self.to.x, self.from.y..=self.to.y).map(|(x, y)| Pos { x, y });
         iter
     }
 
-    fn iter(self) -> impl Iterator<Item=Pos> {
+    fn iter(self) -> impl Iterator<Item = Pos> {
         let iter =
             iproduct!(self.from.x..self.to.x, self.from.y..self.to.y).map(|(x, y)| Pos { x, y });
         iter
@@ -43,7 +43,7 @@ impl PosRange {
 
 impl IntoIterator for PosRange {
     type Item = Pos;
-    type IntoIter = Box<dyn Iterator<Item=Pos>>;
+    type IntoIter = Box<dyn Iterator<Item = Pos>>;
 
     fn into_iter(self) -> <Self as IntoIterator>::IntoIter {
         let iter =
@@ -53,13 +53,13 @@ impl IntoIterator for PosRange {
 }
 
 pub trait PosCollection {
-    type Iter: Iterator<Item=Pos>;
+    type Iter: Iterator<Item = Pos>;
 
     fn iter_pos(&self) -> Self::Iter;
 }
 
 impl PosCollection for Range<Pos> {
-    type Iter = Box<dyn Iterator<Item=Pos>>;
+    type Iter = Box<dyn Iterator<Item = Pos>>;
 
     fn iter_pos(&self) -> Self::Iter {
         Box::new(PosRange::new(self.start, self.end).iter())
