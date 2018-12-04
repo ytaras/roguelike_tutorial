@@ -2,7 +2,8 @@ extern crate doryen_rs;
 #[cfg_attr(test, macro_use)]
 extern crate itertools;
 #[cfg(test)]
-extern crate quickcheck;
+#[macro_use]
+extern crate proptest;
 extern crate shred;
 extern crate specs;
 extern crate specs_derive;

@@ -57,8 +57,8 @@ fn main() {
     let mut app = App::new(AppOptions {
         console_width: CONSOLE_DIM.x.into(),
         console_height: CONSOLE_DIM.y.into(),
-        screen_width: (CONSOLE_DIM.x * 8).into(),
-        screen_height: (CONSOLE_DIM.y * 8).into(),
+        screen_width: CONSOLE_DIM.x as u32 * 8,
+        screen_height: CONSOLE_DIM.y as u32 * 8,
         window_title: "my roguelike".to_owned(),
         font_path: "terminal_8x8.png".to_owned(),
         vsync: true,

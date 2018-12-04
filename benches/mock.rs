@@ -1,18 +1,20 @@
 #![feature(test)]
 extern crate rogue_tutorial;
 extern crate specs;
-extern crate test;
 #[macro_use]
 extern crate specs_derive;
+extern crate test;
 
-use rogue_tutorial::data::components::*;
-use rogue_tutorial::data::structures::*;
-use rogue_tutorial::systems::logic::*;
-use rogue_tutorial::*;
+use test::Bencher;
+
 use specs::prelude::*;
 use specs::RunNow;
 use specs_derive::*;
-use test::Bencher;
+
+use rogue_tutorial::*;
+use rogue_tutorial::data::components::*;
+use rogue_tutorial::data::structures::*;
+use rogue_tutorial::systems::logic::*;
 
 const ENTITIES: u32 = 1_000_000;
 
@@ -69,7 +71,7 @@ fn bench_large_hash(b: &mut Bencher) {
     let mut w = World::new();
     w.register::<Pos>();
     w.register::<Data>();
-    for i in 0..u16::max_value() {
+    for i in 0..DimIndex::max_value() {
         w.create_entity()
             .with(Pos { x: i, y: i })
             .with(Data(i))
@@ -84,4 +86,4 @@ fn bench_large_hash(b: &mut Bencher) {
 }
 
 #[derive(Component)]
-struct Data(u16);
+struct Data(DimIndex);
