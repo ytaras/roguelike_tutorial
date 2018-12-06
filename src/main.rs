@@ -5,11 +5,11 @@ extern crate specs;
 use doryen_rs::{App, AppOptions};
 use specs::prelude::*;
 
+use rogue_tutorial::compatibility::doryen::*;
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
 use rogue_tutorial::levels::level_1;
 use rogue_tutorial::systems::render::*;
-use rogue_tutorial::ui::GameWorld;
 
 const CONSOLE_DIM: Dim = Dim {
     width: 90,
@@ -57,6 +57,6 @@ fn main() {
         show_cursor: true,
         resizable: true,
     });
-    app.set_engine(Box::new(GameWorld::new(world)));
+    app.set_engine(Box::new(GameContext::from_specs(world)));
     app.run();
 }

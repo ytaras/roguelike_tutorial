@@ -1,15 +1,8 @@
-use doryen_rs::Console;
+use data::components::*;
+use data::structures::*;
+use specs::prelude::*;
 
-use data::components::IsVisible;
-use data::structures::TileType;
-
-mod doryen;
-
-pub fn render_doryen(doryen_api: &mut Console) -> doryen::DoryenRenderer {
-    doryen::DoryenRenderer { doryen_api }
-}
-
-type Color = (u8, u8, u8, u8);
+pub type Color = (u8, u8, u8, u8);
 pub const RED: Color = (255, 0, 0, 255);
 pub const WHITE: Color = (255, 255, 255, 255);
 pub const BLACK: Color = (0, 0, 0, 255);
@@ -45,6 +38,39 @@ impl Renderable for TileType {
         match self {
             WALL => '#',
             GROUND => '.',
+        }
+    }
+}
+
+pub trait Renderer: Sized {
+    fn render<T>(&mut self, pos: Pos, r: &T)
+    where
+        T: Renderable;
+
+    fn as_specs_system(&mut self) -> RenderWrapper<Self> {
+        RenderWrapper(self)
+    }
+}
+
+pub struct RenderWrapper<'a, R: Renderer + 'a>(&'a mut R);
+
+impl<'a, R> System<'a> for RenderWrapper<'a, R>
+where
+    R: Renderer,
+{
+    type SystemData = (
+        ReadStorage<'a, HasPos>,
+        ReadStorage<'a, IsVisible>,
+        Read<'a, LevelInfo>,
+    );
+    fn run(&mut self, (pos, vis, li): Self::SystemData) {
+        use specs::Join;
+        let x: &mut R = &mut self.0;
+        for (pos, vis) in li.all_cells() {
+            x.render(pos, vis);
+        }
+        for (pos, vis) in (&pos, &vis).join() {
+            x.render(pos.0, vis);
         }
     }
 }

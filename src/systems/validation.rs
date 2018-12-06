@@ -27,7 +27,8 @@ impl<'a> Validation<'a> for MoveValidation {
             .filter(|new_pos| {
                 let existing_entities = hash(&pos_storage, &tile);
                 !existing_entities.contains_key(&HasPos(*new_pos))
-            }).map(|_| move_dir);
+            })
+            .map(|_| move_dir);
         res
     }
 }

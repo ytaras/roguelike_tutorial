@@ -2,13 +2,15 @@ sudo: required
 language: rust
 rust:
 - stable
-# - beta
 - nightly
+addons:
+  apt:
+    packages:
+      -  libsdl2-dev 
 matrix:
   fast_finish: true
   allow_failures:
     - env: RUSTKCOV
-    # tarpaulit doesnt work with proptes - TODO - create issue
     - env: RUSTCOV
   include:
   - env: RUSTFMT
@@ -25,21 +27,20 @@ matrix:
     - cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
     - cargo tarpaulin --out Xml && bash <(curl -s https://codecov.io/bash)
   - env: CLIPPY
-    rust: nightly
+    rust: stable
     install:
       - rustup component add clippy-preview
       - cargo clippy --all-features
 
 os:
 - linux
-# - osx
-# - windows
 
 install:
 - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install windows-sdk-10.0; fi # windows workaround (for now)
 
 script:
-- cargo check --verbose
+- cargo check --verbose --features render_tcod
+- cargo check --verbose --features render_doryen
 - cargo test --verbose
 
 cache:
