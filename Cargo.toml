@@ -3,12 +3,20 @@ name = "rogue_tutorial"
 version = "0.1.0"
 authors = ["Yuriy Taras <ytaras@softserveinc.com>"]
 
+[features]
+render_tcod = ["tcod"]
+render_doryen = ["doryen-rs"]
+
 [dependencies]
-doryen-rs="0.1.0"
+doryen-rs= {version ="0.1.0", optional = true}
 specs="0.14.1"
 specs-derive="0.3.0"
 itertools="0.7.11"
 shred="0.7.1"
+#tcod = "0.12.1"
+tcod = { git = "https://github.com/rjungemann/tcod-rs.git", branch = "fix-sdl2-rendering-mojave", optional = true }
+log = "0.4.6"
+pretty_env_logger = "0.2.5"
 
 [dev-dependencies]
 proptest="0.8.7"
@@ -17,3 +25,13 @@ proptest="0.8.7"
 travis-ci = { repository = "ytaras/rogue_tutorial" }
 coveralls = { repository = "ytaras/rogue_tutorial", service = "github" }
 maintenance = { status = "experimental" }
+
+[[bin]]
+name = "tcod"
+path = "src/bin/tcod.rs"
+required-features = ["render_tcod"]
+
+[[bin]]
+name = "doryen"
+path = "src/main.rs"
+required-features = ["render_doryen"]

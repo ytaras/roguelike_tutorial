@@ -14,7 +14,8 @@ impl<'a> RichEntityBuilder for EntityBuilder<'a> {
             .with(IsVisible {
                 color,
                 display_char,
-            }).with(TakesWholeTile)
+            })
+            .with(TakesWholeTile)
     }
 
     fn is_player(self) -> Self {

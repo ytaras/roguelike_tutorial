@@ -19,4 +19,19 @@ impl KeyMapper {
     pub fn commands(&self) -> Iter<String, Command> {
         self.game_commands.iter()
     }
+
+    #[cfg(feature = "render_tcod")]
+    pub fn command(&self, key: tcod::input::Key) -> Option<&Command> {
+        use tcod::input::KeyCode::*;
+        let mnem = match key.code {
+            Left => Some("ArrowLeft"),
+            Right => Some("ArrowRight"),
+            Up => Some("ArrowUp"),
+            Down => Some("ArrowDown"),
+            Escape => Some("Escape"),
+            _ => None,
+        };
+        trace!("Maping for {:?} {:?}", key, mnem);
+        mnem.and_then(|o| self.game_commands.get(o))
+    }
 }

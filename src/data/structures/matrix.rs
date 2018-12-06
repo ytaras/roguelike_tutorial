@@ -159,7 +159,8 @@ mod test {
             .prop_flat_map(|m| {
                 let pos = pos(m.width, m.height);
                 (Just(m), pos)
-            }).boxed()
+            })
+            .boxed()
     }
 
     proptest! {
@@ -201,7 +202,6 @@ mod test {
 
         #[test]
         fn iter_pos_has_only_unique(m: Matrix<bool>) {
-            let iter = m.iter();
             let positions_count = m.iter_pos().count();
             let expected_count = m.width as InternalIndex * m.height as InternalIndex;
             prop_assert_eq!(expected_count, positions_count);

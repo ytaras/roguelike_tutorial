@@ -1,60 +1,43 @@
-use doryen_rs::*;
 use specs::prelude::*;
 
 use common::validations::Validation;
 use data::components::*;
 use data::structures::*;
 use systems::logic::*;
-use systems::render::render_doryen;
 use systems::validation::MoveValidation;
 
 use self::keymapper::*;
+use systems::render::Renderer;
 
 mod keymapper;
 
-pub struct GameWorld {
-    world: World,
-    key_mapper: KeyMapper,
-    game_command_handler: GameCommandHandler,
-    console: Console,
+pub struct Game {
+    pub world: World,
+    pub key_mapper: KeyMapper,
+    pub game_command_handler: GameCommandHandler,
 }
 
-impl GameWorld {
-    pub fn new(mut world: World) -> Self {
+impl Game {
+    pub fn new(world: World) -> Self {
         let key_mapper = KeyMapper::new();
         let game_command_handler = GameCommandHandler;
-        let console: Console = world.exec(|level_info: Read<LevelInfo>| {
-            Console::new(level_info.width().into(), level_info.height().into())
-        });
-        GameWorld {
+
+        Game {
             world,
             key_mapper,
             game_command_handler,
-            console,
         }
     }
-}
 
-impl Engine for GameWorld {
-    fn update(&mut self, api: &mut DoryenApi) {
+    pub fn render_on<R: Renderer>(&mut self, r: &mut R) {
         use specs::RunNow;
-        let input = api.input();
-        for (key, command) in self.key_mapper.commands() {
-            if input.key_pressed(key) {
-                self.game_command_handler.exec(command, &mut self.world);
-            }
-        }
-        // TODO - Use dispatcher
-        ExecuteCommands.run_now(&self.world.res);
-        self.world.maintain();
+        r.as_specs_system().run_now(&self.world.res);
     }
-    fn render(&mut self, api: &mut DoryenApi) {
-        {
-            let mut renderer = render_doryen(&mut self.console);
-            use specs::RunNow;
-            renderer.run_now(&self.world.res);
-        }
-        self.console.blit(0, 0, api.con(), 1.0, 1.0, None);
+
+    pub fn update(&mut self) {
+        use specs::RunNow;
+        ExecuteCommands.run_now(&mut self.world.res);
+        self.world.maintain();
     }
 }
 
@@ -62,7 +45,7 @@ pub struct GameCommandHandler;
 
 impl GameCommandHandler {
     // FIXME - Use validation framework for everyone here
-    fn exec(&self, gc: &Command, world: &mut World) {
+    pub fn exec(&self, gc: &Command, world: &mut World) {
         match gc {
             Command::GameCommand(GameCommand::Exit) => {
                 use std::process::exit;

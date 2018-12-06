@@ -138,7 +138,8 @@ mod test {
                 let dims = (1..(level_dim.width - x), (1..(level_dim.height - y)));
                 println!("{:?}", dims);
                 (Just(Pos { x, y }), dims)
-            }).prop_map(|(pos, (width, height))| Room::new(pos, Dim { width, height }))
+            })
+            .prop_map(|(pos, (width, height))| Room::new(pos, Dim { width, height }))
             .boxed()
     }
 
@@ -148,7 +149,8 @@ mod test {
             .prop_flat_map(|m| {
                 let gen = room(m.dim());
                 (Just(m), gen)
-            }).boxed()
+            })
+            .boxed()
     }
 
     fn pos(d: Dim) -> BoxedStrategy<Pos> {
@@ -163,7 +165,8 @@ mod test {
             .prop_flat_map(|m| {
                 let pos_gen = pos(m.dim());
                 (Just(m), pos_gen.clone(), pos_gen)
-            }).prop_filter("positions must be ne", |(_, from, to)| from != to)
+            })
+            .prop_filter("positions must be ne", |(_, from, to)| from != to)
             .prop_map(|(l, from, to)| (l, LCorridor::new(from, to, true)))
             .boxed()
     }
