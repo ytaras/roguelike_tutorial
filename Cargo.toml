@@ -3,6 +3,7 @@ name = "rogue_tutorial"
 version = "0.3.1-alpha.0"
 authors = ["Yuriy Taras <ytaras@softserveinc.com>"]
 publish = false
+edition = "2018"
 
 [features]
 render_tcod = ["tcod"]

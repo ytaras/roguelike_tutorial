@@ -1,10 +1,10 @@
 use specs::Read;
 use specs::ReadStorage;
 
-use common::query::*;
-use common::validations::Validation;
-use data::components::*;
-use data::structures::{CellObject, Dir, LevelInfo};
+use crate::common::query::*;
+use crate::common::validations::Validation;
+use crate::data::components::*;
+use crate::data::structures::{CellObject, Dir, LevelInfo};
 
 #[derive(Debug, Default)]
 pub struct MoveValidation;
@@ -37,12 +37,12 @@ impl<'a> Validation<'a> for MoveValidation {
 mod tests {
     use specs::{Builder, World};
 
-    use data::components::*;
-    use data::structures::LevelInfo;
-    use data::structures::Pos;
-    use data::structures::TileType::*;
-    use data::structures::{E, S};
-    use systems::render::YELLOW;
+    use crate::data::components::*;
+    use crate::data::structures::LevelInfo;
+    use crate::data::structures::Pos;
+    use crate::data::structures::TileType::*;
+    use crate::data::structures::{E, S};
+    use crate::systems::render::YELLOW;
 
     use super::*;
 

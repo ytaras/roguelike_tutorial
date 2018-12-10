@@ -121,6 +121,7 @@ mod test {
 
     use itertools::*;
     use proptest::prelude::*;
+    use proptest::{prop_assert, prop_assert_eq, prop_compose, proptest, proptest_helper};
 
     use super::*;
 

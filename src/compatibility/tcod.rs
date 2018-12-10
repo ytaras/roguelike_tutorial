@@ -1,6 +1,6 @@
-use data::structures::Pos;
-use systems::render::Color;
-use systems::render::{Renderable, Renderer};
+use crate::data::structures::Pos;
+use crate::systems::render::Color;
+use crate::systems::render::{Renderable, Renderer};
 use tcod::BackgroundFlag;
 
 impl<'a, C: ::tcod::Console> Renderer for C {

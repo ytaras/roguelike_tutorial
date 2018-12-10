@@ -74,8 +74,8 @@ mod test {
 
     fn test_unique_panics() {
         let w = create_world();
-        let storages = &w.read_storage::<Data>();
-        assert!(unique(storages).is_err());
+        let storage = &w.read_storage::<Data>();
+        assert!(unique(storage).is_err());
     }
 
     #[test]

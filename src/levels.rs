@@ -1,5 +1,5 @@
-use data::structures::matrix::*;
-use data::structures::*;
+use crate::data::structures::matrix::*;
+use crate::data::structures::*;
 use std::cmp::max;
 use std::cmp::min;
 use std::ops::{Index, IndexMut, RangeInclusive};
@@ -125,6 +125,7 @@ impl PosCollection for LCorridor {
 mod test {
     use super::*;
     use proptest::prelude::*;
+    use proptest::{prop_assert, prop_assert_eq, prop_compose, proptest, proptest_helper};
 
     const MAX_DIM: Dim = Dim {
         width: DimIndex::max_value(),

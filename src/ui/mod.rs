@@ -1,13 +1,13 @@
 use specs::prelude::*;
 
-use common::validations::Validation;
-use data::components::*;
-use data::structures::*;
-use systems::logic::*;
-use systems::validation::MoveValidation;
+use crate::common::validations::Validation;
+use crate::data::components::*;
+use crate::data::structures::*;
+use crate::systems::logic::*;
+use crate::systems::validation::MoveValidation;
 
 use self::keymapper::*;
-use systems::render::Renderer;
+use crate::systems::render::Renderer;
 
 mod keymapper;
 
