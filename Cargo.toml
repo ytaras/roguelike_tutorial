@@ -2,6 +2,7 @@
 name = "rogue_tutorial"
 version = "0.1.0"
 authors = ["Yuriy Taras <ytaras@softserveinc.com>"]
+publish = false
 
 [features]
 render_tcod = ["tcod"]
