@@ -73,8 +73,8 @@ impl Room {
 
     fn center(&self) -> Pos {
         Pos {
-            x: ((self.from.x as u16 + self.to.x as u16) / 2) as DimIndex,
-            y: ((self.from.y as u16 + self.to.y as u16) / 2) as DimIndex,
+            x: (self.from.x / 2) + (self.to.x / 2),
+            y: (self.from.y / 2) + (self.to.y / 2),
         }
     }
 

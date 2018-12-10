@@ -10,7 +10,7 @@ pub struct Pos {
     pub y: DimIndex,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Dim {
     pub width: DimIndex,
     pub height: DimIndex,
@@ -36,15 +36,11 @@ impl PosRange {
     }
 
     fn iter_inclusive(self) -> impl Iterator<Item = Pos> {
-        let iter =
-            iproduct!(self.from.x..=self.to.x, self.from.y..=self.to.y).map(|(x, y)| Pos { x, y });
-        iter
+        iproduct!(self.from.x..=self.to.x, self.from.y..=self.to.y).map(|(x, y)| Pos { x, y })
     }
 
     fn iter(self) -> impl Iterator<Item = Pos> {
-        let iter =
-            iproduct!(self.from.x..self.to.x, self.from.y..self.to.y).map(|(x, y)| Pos { x, y });
-        iter
+        iproduct!(self.from.x..self.to.x, self.from.y..self.to.y).map(|(x, y)| Pos { x, y })
     }
 }
 

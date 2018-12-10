@@ -6,8 +6,9 @@ use std::collections::HashMap;
 pub struct KeyMapper {
     game_commands: HashMap<String, Command>,
 }
-impl KeyMapper {
-    pub fn new() -> Self {
+
+impl Default for KeyMapper {
+    fn default() -> Self {
         let mut game_commands = HashMap::new();
         game_commands.insert("Escape".to_string(), Command::exit());
         game_commands.insert("ArrowLeft".to_string(), Command::west());
@@ -16,7 +17,9 @@ impl KeyMapper {
         game_commands.insert("ArrowDown".to_string(), Command::south());
         KeyMapper { game_commands }
     }
+}
 
+impl KeyMapper {
     pub fn commands(&self) -> Iter<String, Command> {
         self.game_commands.iter()
     }

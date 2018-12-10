@@ -19,7 +19,7 @@ pub struct Game {
 
 impl Game {
     pub fn new(world: World) -> Self {
-        let key_mapper = KeyMapper::new();
+        let key_mapper = KeyMapper::default();
         let game_command_handler = GameCommandHandler;
 
         Game {
@@ -36,7 +36,7 @@ impl Game {
 
     pub fn update(&mut self) {
         use specs::RunNow;
-        ExecuteCommands.run_now(&mut self.world.res);
+        ExecuteCommands.run_now(&self.world.res);
         self.world.maintain();
     }
 }

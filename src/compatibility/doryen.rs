@@ -1,5 +1,4 @@
 use crate::data::structures::*;
-use crate::systems::logic::ExecuteCommands;
 use crate::systems::render::Renderable;
 use crate::systems::render::Renderer;
 use crate::ui::Game;
@@ -45,7 +44,6 @@ impl Renderer for DoryenRenderer {
 
 impl Engine for GameContext {
     fn update(&mut self, api: &mut DoryenApi) {
-        use specs::RunNow;
         let input = api.input();
         for (key, command) in self.game.key_mapper.commands() {
             if input.key_pressed(key) {
