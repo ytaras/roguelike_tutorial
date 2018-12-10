@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut};
 
-use data::structures::matrix::*;
+use crate::data::structures::matrix::*;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TileType {

@@ -63,8 +63,6 @@ fn main() {
     let mut game = Game::new(world);
 
     while !root.window_closed() {
-        use specs::RunNow;
-
         game.render_on(&mut root);
 
         root.flush();

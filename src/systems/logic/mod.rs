@@ -2,8 +2,8 @@ use std::marker::PhantomData;
 
 use specs::prelude::*;
 
-use data::components::*;
-use data::structures::*;
+use crate::data::components::*;
+use crate::data::structures::*;
 
 #[derive(Default)]
 pub struct AssertUnique<T: Component> {
@@ -30,7 +30,7 @@ impl<'a> System<'a> for ExecuteCommands {
     fn run(&mut self, (e, mut pos, mut plan_storage, lu): Self::SystemData) {
         use specs::Join;
 
-        for (e, mut pos, plan) in (&e, &mut pos, &mut plan_storage).join() {
+        for (e, pos, plan) in (&e, &mut pos, &mut plan_storage).join() {
             let mut pos = &mut pos.0;
             match plan.0 {
                 ActorCommand::Move(ref dir) => {

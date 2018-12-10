@@ -1,5 +1,5 @@
-use data::components::*;
-use data::structures::*;
+use crate::data::components::*;
+use crate::data::structures::*;
 use specs::prelude::*;
 
 pub type Color = (u8, u8, u8, u8);

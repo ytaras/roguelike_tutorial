@@ -1,7 +1,7 @@
 use specs::prelude::*;
 
-use data::components::*;
-use data::structures::Pos;
+use crate::data::components::*;
+use crate::data::structures::Pos;
 
 pub trait RichEntityBuilder {
     fn with_actor_components(self, display_char: char, color: Color, pos: Pos) -> Self;

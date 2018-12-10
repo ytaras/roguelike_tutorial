@@ -1,10 +1,10 @@
-use data::structures::*;
+use crate::data::structures::*;
+use crate::systems::logic::ExecuteCommands;
+use crate::systems::render::Renderable;
+use crate::systems::render::Renderer;
+use crate::ui::Game;
 use doryen_rs::*;
 use specs::prelude::*;
-use systems::logic::ExecuteCommands;
-use systems::render::Renderable;
-use systems::render::Renderer;
-use ui::Game;
 
 // FIXME find better names
 pub struct GameContext {
