@@ -49,10 +49,10 @@ mod tests {
     fn create_world(add_wall: bool) -> World {
         let mut w = World::new();
         let mut level = LevelInfo::new(1, 2);
-        level[Pos { x: 0, y: 0 }] = GROUND;
-        level[Pos { x: 0, y: 1 }] = GROUND;
+        level[Pos { x: 0, y: 0 }] = Ground;
+        level[Pos { x: 0, y: 1 }] = Ground;
         if add_wall {
-            level[Pos { x: 0, y: 1 }] = WALL;
+            level[Pos { x: 0, y: 1 }] = Wall;
         }
         w.add_resource(level);
         w.register::<IsPlayer>();

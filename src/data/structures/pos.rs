@@ -1,19 +1,72 @@
 use itertools::iproduct;
+use std::cmp::Ordering;
 use std::ops::Range;
 use std::ops::RangeInclusive;
 
 pub type DimIndex = u8;
 
-#[derive(Debug, PartialEq, Copy, Clone, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, PartialEq, Copy, Clone, Eq, Hash, Default)]
 pub struct Pos {
     pub x: DimIndex,
     pub y: DimIndex,
+}
+
+impl PartialOrd for Pos {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        let self_w: u16 = u16::from(self.x) + u16::from(self.y);
+        let other_w: u16 = u16::from(other.x) + u16::from(other.y);
+        self_w.partial_cmp(&other_w)
+    }
+}
+
+impl Ord for Pos {
+    fn cmp(&self, other: &Self) -> Ordering {
+        let self_w: u16 = u16::from(self.x) + u16::from(self.y);
+        let other_w: u16 = u16::from(other.x) + u16::from(other.y);
+        self_w.cmp(&other_w)
+    }
+}
+
+impl Pos {
+    pub fn n(self) -> Pos {
+        Pos {
+            y: self.y - 1,
+            ..self
+        }
+    }
+    pub fn s(self) -> Pos {
+        Pos {
+            y: self.y + 1,
+            ..self
+        }
+    }
+    pub fn w(self) -> Pos {
+        Pos {
+            x: self.x - 1,
+            ..self
+        }
+    }
+    pub fn e(self) -> Pos {
+        Pos {
+            x: self.x + 1,
+            ..self
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
 pub struct Dim {
     pub width: DimIndex,
     pub height: DimIndex,
+}
+
+impl Dim {
+    pub fn max_pos(self) -> Pos {
+        Pos {
+            x: self.width - 1,
+            y: self.height - 1,
+        }
+    }
 }
 
 pub struct PosRange {

@@ -8,6 +8,7 @@ pub const WHITE: Color = (255, 255, 255, 255);
 pub const BLACK: Color = (0, 0, 0, 255);
 pub const DARK_GROUND: Color = (50, 50, 50, 255);
 pub const DARK_WALL: Color = (50, 50, 50, 255);
+pub const LIGHT_WALL: Color = (25, 25, 25, 255);
 pub const YELLOW: Color = (255, 255, 0, 255);
 pub trait Renderable {
     fn color(&self) -> Color;
@@ -28,16 +29,18 @@ impl Renderable for TileType {
         use self::TileType::*;
 
         match self {
-            WALL => DARK_WALL,
-            GROUND => DARK_GROUND,
+            Wall => DARK_WALL,
+            RoomWall => LIGHT_WALL,
+            Ground => DARK_GROUND,
         }
     }
 
     fn display_char(&self) -> char {
         use self::TileType::*;
         match self {
-            WALL => '#',
-            GROUND => '.',
+            Wall => '#',
+            RoomWall => '±',
+            Ground => '.',
         }
     }
 }

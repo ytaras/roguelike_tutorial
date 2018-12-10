@@ -6,3 +6,10 @@
 # everyone who runs the test benefits from these saved cases.
 xs 3442697841 2691041321 860029155 1310150990 # shrinks to room = Room { from: Pos { x: 1, y: 2 }, to: Pos { x: 2, y: 254 } }
 xs 3190403260 225814116 3949876919 1320660660 # shrinks to (mut level, corridor) = (LevelInfo { data: Matrix { width: 4, height: 4, data: [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL] } }, LCorridor { from: Pos { x: 0, y: 0 }, to: Pos { x: 1, y: 0 }, horizontal_first: true })
+xs 2741736007 1177426809 3190388312 4247163044 # shrinks to p = Pos { x: 0, y: 0 }, d = Dim { width: 0, height: 0 }
+xs 2057905815 474579477 618608856 2306977502 # shrinks to rgs = RoomGenStrategy { min_dim: Dim { width: 13, height: 38 }, max_dim: Dim { width: 85, height: 38 }, max_pos: Pos { x: 185, y: 233 }, min_pos: Pos { x: 55, y: 178 } }
+xs 2352465635 2946686473 1648039305 695807978 # shrinks to rgs = RoomGenStrategy { min_dim: Dim { width: 0, height: 68 }, max_dim: Dim { width: 2, height: 68 }, max_pos: Pos { x: 27, y: 247 }, min_pos: Pos { x: 24, y: 161 } }
+xs 2194464160 2095332496 778195248 3107947148 # shrinks to rgs = RoomGenStrategy { min_dim: Dim { width: 13, height: 118 }, max_dim: Dim { width: 31, height: 118 }, max_pos: Pos { x: 93, y: 120 }, min_pos: Pos { x: 60, y: 0 } }
+xs 2327315411 3753927221 1426601424 695224742 # shrinks to r1 = Room { from: Pos { x: 1, y: 67 }, to: Pos { x: 192, y: 68 } }, r2 = Room { from: Pos { x: 3, y: 1 }, to: Pos { x: 4, y: 70 } }
+xs 2565140014 1575031613 2304777733 3491333021 # shrinks to rgs = RoomsGenStrategy { room_strategy: RoomGenStrategy { min_dim: Dim { width: 7, height: 30 }, max_dim: Dim { width: 33, height: 30 }, max_pos: Pos { x: 178, y: 174 }, min_pos: Pos { x: 111, y: 58 } }, max_rooms: 25 }
+xs 2820786603 2616343966 260418295 3698164922 # shrinks to r1 = Room { from: Pos { x: 1, y: 60 }, to: Pos { x: 161, y: 61 } }, r2 = Room { from: Pos { x: 1, y: 26 }, to: Pos { x: 2, y: 59 } }

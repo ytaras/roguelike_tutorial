@@ -4,8 +4,9 @@ use crate::data::structures::matrix::*;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TileType {
-    WALL,
-    GROUND,
+    Wall,
+    Ground,
+    RoomWall,
 }
 
 pub trait CellObject {
@@ -16,14 +17,16 @@ pub trait CellObject {
 impl CellObject for TileType {
     fn is_walkable(&self) -> bool {
         match self {
-            TileType::WALL => false,
+            TileType::Wall => false,
+            TileType::RoomWall => false,
             _ => true,
         }
     }
 
     fn blocks_sight(&self) -> bool {
         match self {
-            TileType::WALL => true,
+            TileType::Wall => true,
+            TileType::RoomWall => true,
             _ => false,
         }
     }
@@ -31,7 +34,7 @@ impl CellObject for TileType {
 
 impl Default for TileType {
     fn default() -> Self {
-        TileType::WALL
+        TileType::Wall
     }
 }
 
@@ -59,6 +62,12 @@ impl PosCollection for LevelInfo {
     fn iter_pos(&self) -> Self::Iter {
         self.data.iter_pos()
     }
+}
+
+pub trait HasWall {
+    type Iter: Iterator<Item = Pos>;
+
+    fn walls(&self) -> Self::Iter;
 }
 
 impl LevelInfo {
@@ -92,5 +101,9 @@ impl LevelInfo {
 
     pub fn dim(&self) -> Dim {
         self.data.dim()
+    }
+
+    pub fn max_pos(&self) -> Pos {
+        self.dim().max_pos()
     }
 }
