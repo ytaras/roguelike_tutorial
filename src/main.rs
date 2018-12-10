@@ -24,11 +24,8 @@ fn main() {
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
 
-    let level = level_1();
-    let player_pos = Pos {
-        x: level.width() / 2,
-        y: level.height() / 2,
-    };
+    let (level, room) = level_1(&mut rand::thread_rng());
+    let player_pos = room.center();
 
     world.add_resource(level);
 
@@ -36,13 +33,6 @@ fn main() {
         .create_entity()
         .is_player()
         .with_actor_components('@', RED, player_pos)
-        .build();
-
-    let mut npc_pos = player_pos;
-    npc_pos.x -= 5;
-    world
-        .create_entity()
-        .with_actor_components('@', YELLOW, npc_pos)
         .build();
 
     let mut app = App::new(AppOptions {

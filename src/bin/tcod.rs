@@ -13,9 +13,10 @@ use rogue_tutorial::ui::Game;
 use specs::prelude::*;
 use tcod::*;
 
-// actual size of the window
-const SCREEN_WIDTH: i32 = 80;
-const SCREEN_HEIGHT: i32 = 50;
+const CONSOLE_DIM: Dim = Dim {
+    width: 90,
+    height: 50,
+};
 
 const LIMIT_FPS: i32 = 20; // 20 frames-per-second maximum
 
@@ -24,7 +25,7 @@ fn main() {
     let mut root = RootInitializer::new()
         .font("static/terminal_12x12.png", FontLayout::AsciiInRow)
         .font_type(FontType::Greyscale)
-        .size(SCREEN_WIDTH, SCREEN_HEIGHT)
+        .size(CONSOLE_DIM.width.into(), CONSOLE_DIM.height.into())
         .title("Rust/libtcod tutorial")
         .init();
 
@@ -36,12 +37,10 @@ fn main() {
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
 
+    let mut rng = rand::thread_rng();
     // FXIME Extract to script
-    let level = level_1();
-    let player_pos = Pos {
-        x: level.width() / 2,
-        y: level.height() / 2,
-    };
+    let (level, room) = level_1(&mut rng);
+    let player_pos = room.center();
 
     world.add_resource(level);
 
@@ -49,13 +48,6 @@ fn main() {
         .create_entity()
         .is_player()
         .with_actor_components('@', RED, player_pos)
-        .build();
-
-    let mut npc_pos = player_pos;
-    npc_pos.x -= 5;
-    world
-        .create_entity()
-        .with_actor_components('@', YELLOW, npc_pos)
         .build();
 
     tcod::system::set_fps(LIMIT_FPS);
