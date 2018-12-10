@@ -28,7 +28,7 @@ struct DoryenRenderer {
 
 impl DoryenRenderer {
     fn blit(&self, root: &mut Console) {
-        unimplemented!()
+        self.console.blit(0, 0, root, 1., 1., None);
     }
 }
 
