@@ -2,6 +2,12 @@ use std::ops::{Index, IndexMut};
 
 use crate::data::structures::matrix::*;
 
+pub mod corridor;
+pub mod room;
+
+pub use self::corridor::*;
+pub use self::room::*;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum TileType {
     Wall,

@@ -3,9 +3,10 @@ use std::convert::From;
 pub use self::level_data::*;
 pub use self::matrix::{Dim, DimIndex, Pos};
 
+pub mod dim;
 mod level_data;
 pub mod matrix;
-mod pos;
+pub mod pos;
 
 #[derive(Debug)]
 pub enum GameCommand {

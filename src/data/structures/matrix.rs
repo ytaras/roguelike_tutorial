@@ -4,6 +4,7 @@ use std::ops::IndexMut;
 use std::ops::Range;
 use std::slice::Iter;
 
+pub use super::dim::*;
 pub use super::pos::*;
 
 type InternalIndex = usize;

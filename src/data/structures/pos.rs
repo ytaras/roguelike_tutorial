@@ -54,21 +54,6 @@ impl Pos {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
-pub struct Dim {
-    pub width: DimIndex,
-    pub height: DimIndex,
-}
-
-impl Dim {
-    pub fn max_pos(self) -> Pos {
-        Pos {
-            x: self.width - 1,
-            y: self.height - 1,
-        }
-    }
-}
-
 pub struct PosRange {
     from: Pos,
     to: Pos,
@@ -131,12 +116,13 @@ impl PosCollection for RangeInclusive<Pos> {
 }
 
 #[cfg(test)]
-mod test {
+pub mod test {
     use itertools::*;
     use proptest::prelude::*;
     use proptest::{prop_assert, prop_assert_eq, prop_compose, proptest, proptest_helper};
 
     use super::*;
+    use crate::data::structures::Dim;
 
     impl Arbitrary for Pos {
         type Parameters = ();
@@ -147,7 +133,32 @@ mod test {
 
         type Strategy = BoxedStrategy<Pos>;
     }
-    fn pos_in_dim(d: Dim) -> BoxedStrategy<Pos> {
+
+    pub const MAX_DIM: Dim = Dim {
+        width: DimIndex::max_value(),
+        height: DimIndex::max_value(),
+    };
+
+    pub const SMALL_DIM: Dim = Dim {
+        width: 100,
+        height: 100,
+    };
+    pub fn pos(start: Pos, end: Pos) -> BoxedStrategy<Pos> {
+        (start.x..=end.x, start.y..=end.y)
+            .prop_map(|(x, y)| Pos { x, y })
+            .boxed()
+    }
+    pub fn nonzero_pos_in_dim(d: Dim) -> BoxedStrategy<Pos> {
+        pos(
+            Pos { x: 1, y: 1 },
+            Pos {
+                x: d.width - 1,
+                y: d.height - 1,
+            },
+        )
+    }
+
+    pub fn pos_in_dim(d: Dim) -> BoxedStrategy<Pos> {
         (0..d.width, 0..d.height)
             .prop_map(|(x, y)| Pos { x, y })
             .boxed()
