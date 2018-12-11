@@ -6,7 +6,7 @@ publish = false
 edition = "2018"
 
 [features]
-render_tcod = ["tcod"]
+render_tcod = []
 render_doryen = ["doryen-rs"]
 
 [dependencies]
@@ -16,7 +16,7 @@ specs-derive="0.3.0"
 itertools="0.8.0"
 shred="0.7.1"
 #tcod = "0.12.1"
-tcod = { git = "https://github.com/rjungemann/tcod-rs.git", branch = "fix-sdl2-rendering-mojave", optional = true }
+tcod = { git = "https://github.com/rjungemann/tcod-rs.git", branch = "fix-sdl2-rendering-mojave" }
 log = "0.4.6"
 pretty_env_logger = "0.3.0"
 rand = "0.6.1"

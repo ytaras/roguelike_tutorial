@@ -1,7 +1,7 @@
 use std::convert::From;
 
 pub use self::level_data::*;
-pub use self::matrix::{Dim, DimIndex, Pos};
+pub use self::matrix::{Dim, DimIndex, HasDim, Pos};
 
 pub mod dim;
 mod level_data;

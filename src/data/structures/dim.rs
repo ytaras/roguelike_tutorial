@@ -7,12 +7,24 @@ pub struct Dim {
     pub height: DimIndex,
 }
 
-impl Dim {
-    pub fn max_pos(self) -> Pos {
+pub trait HasDim {
+    fn width(&self) -> DimIndex;
+    fn height(&self) -> DimIndex;
+
+    fn max_pos(&self) -> Pos {
         Pos {
-            x: self.width - 1,
-            y: self.height - 1,
+            x: self.width() - 1,
+            y: self.height() - 1,
         }
+    }
+}
+
+impl HasDim for Dim {
+    fn width(&self) -> DimIndex {
+        self.width
+    }
+    fn height(&self) -> DimIndex {
+        self.height
     }
 }
 
