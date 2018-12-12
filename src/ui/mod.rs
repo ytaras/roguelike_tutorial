@@ -15,6 +15,7 @@ pub struct Game {
     pub world: World,
     pub key_mapper: KeyMapper,
     pub game_command_handler: GameCommandHandler,
+    fov: Fov,
 }
 
 impl Game {
@@ -26,6 +27,7 @@ impl Game {
             world,
             key_mapper,
             game_command_handler,
+            fov: Fov::default(),
         }
     }
 
@@ -36,6 +38,8 @@ impl Game {
 
     pub fn update(&mut self) {
         use specs::RunNow;
+        // TODO Dispatcher
+        self.fov.run_now(&self.world.res);
         ExecuteCommands.run_now(&self.world.res);
         self.world.maintain();
     }

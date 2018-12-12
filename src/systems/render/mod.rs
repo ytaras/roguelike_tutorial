@@ -1,15 +1,14 @@
+use crate::common::query::singleton;
 use crate::data::components::*;
+use crate::data::structures::matrix::Matrix;
 use crate::data::structures::*;
+use log::warn;
 use specs::prelude::*;
 
-pub type Color = (u8, u8, u8, u8);
-pub const RED: Color = (255, 0, 0, 255);
-pub const WHITE: Color = (255, 255, 255, 255);
-pub const BLACK: Color = (0, 0, 0, 255);
-pub const DARK_GROUND: Color = (50, 50, 50, 255);
-pub const DARK_WALL: Color = (50, 50, 50, 255);
-pub const LIGHT_WALL: Color = (25, 25, 25, 255);
-pub const YELLOW: Color = (255, 255, 0, 255);
+pub type Color = ::tcod::Color;
+pub const RED: Color = ::tcod::colors::RED;
+pub const LIGHT_GROUND: Color = tcod::colors::GREY;
+pub const LIGHT_WALL: Color = tcod::colors::GREY;
 pub trait Renderable {
     fn color(&self) -> Color;
     fn display_char(&self) -> char;
@@ -29,9 +28,9 @@ impl Renderable for TileType {
         use self::TileType::*;
 
         match self {
-            Wall => DARK_WALL,
+            Wall => LIGHT_WALL,
             RoomWall => LIGHT_WALL,
-            Ground => DARK_GROUND,
+            Ground => LIGHT_GROUND,
         }
     }
 
@@ -46,9 +45,11 @@ impl Renderable for TileType {
 }
 
 pub trait Renderer: Sized {
-    fn render<T>(&mut self, pos: Pos, r: &T)
+    fn render<T>(&mut self, pos: Pos, r: &T, in_fov: bool)
     where
         T: Renderable;
+
+    fn clear(&mut self);
 
     fn as_specs_system(&mut self) -> RenderWrapper<Self> {
         RenderWrapper(self)
@@ -64,16 +65,33 @@ where
     type SystemData = (
         ReadStorage<'a, HasPos>,
         ReadStorage<'a, IsVisible>,
+        ReadStorage<'a, HasVision>,
+        ReadStorage<'a, IsPlayer>,
         Read<'a, LevelInfo>,
     );
-    fn run(&mut self, (pos, vis, li): Self::SystemData) {
+    fn run(&mut self, (pos, vis, vision, is_pl, li): Self::SystemData) {
         use specs::Join;
-        let x: &mut R = &mut self.0;
-        for (pos, vis) in li.all_cells() {
-            x.render(pos, vis);
-        }
-        for (pos, vis) in (&pos, &vis).join() {
-            x.render(pos.0, vis);
+
+        let (player_vision, _) = singleton((&vision, &is_pl)).unwrap();
+        let pw: Option<&Matrix<bool>> = player_vision.fov();
+        let mem: Option<&Matrix<bool>> = player_vision.memory();
+
+        if let (Some(fov), Some(mem)) = (pw, mem) {
+            let x: &mut R = &mut self.0;
+            x.clear();
+            for (pos, vis) in li.all_cells() {
+                let show = mem[pos];
+                if show {
+                    x.render(pos, vis, fov[pos]);
+                }
+            }
+            for (pos, vis) in (&pos, &vis).join() {
+                if fov[pos.0] {
+                    x.render(pos.0, vis, fov[pos.0]);
+                }
+            }
+        } else {
+            warn!("Not found player FOV, not rendering");
         }
     }
 }

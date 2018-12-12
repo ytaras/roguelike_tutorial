@@ -19,6 +19,6 @@ impl<'a> RichEntityBuilder for EntityBuilder<'a> {
     }
 
     fn is_player(self) -> Self {
-        self.with(IsPlayer)
+        self.with(IsPlayer).with(HasVision::new(8))
     }
 }

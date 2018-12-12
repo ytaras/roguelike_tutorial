@@ -1,15 +1,8 @@
 use crate::common::gen::Gen;
 use crate::data::structures::matrix::*;
 use crate::data::structures::*;
-use itertools::any;
-use itertools::Itertools;
 use log::*;
 use rand::Rng;
-use std::cmp::max;
-use std::cmp::min;
-use std::ops::Range;
-use std::ops::{Index, IndexMut, RangeInclusive};
-use std::prelude::v1::Vec;
 
 pub mod functions;
 pub mod generators;

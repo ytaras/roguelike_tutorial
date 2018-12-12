@@ -32,13 +32,23 @@ impl DoryenRenderer {
 }
 
 impl Renderer for DoryenRenderer {
-    fn render<T>(&mut self, pos: Pos, r: &T)
+    fn render<T>(&mut self, pos: Pos, renderable: &T, in_fov: bool)
     where
         T: Renderable,
     {
-        self.console.fore(pos.x.into(), pos.y.into(), r.color());
+        let color = if in_fov {
+            renderable.color()
+        } else {
+            renderable.color() * 0.5
+        };
         self.console
-            .ascii(pos.x.into(), pos.y.into(), r.display_char() as u16);
+            .fore(pos.x.into(), pos.y.into(), (color.r, color.g, color.b, 255));
+        self.console
+            .ascii(pos.x.into(), pos.y.into(), renderable.display_char() as u16);
+    }
+
+    fn clear(&mut self) {
+        self.console.clear(None, None, None);
     }
 }
 

@@ -4,6 +4,8 @@ use specs_derive::*;
 use super::structures::*;
 
 pub use self::builder::*;
+use crate::data::structures::matrix::Matrix;
+use crate::systems::render::Color;
 
 mod builder;
 
@@ -24,8 +26,6 @@ impl<'a> std::ops::Add<Dir> for Pos {
         Pos { x, y }
     }
 }
-
-type Color = (u8, u8, u8, u8);
 
 #[derive(Component, Debug)]
 pub struct IsVisible {
@@ -49,3 +49,43 @@ impl PlansExecuting {
 
 #[derive(Component, PartialEq, Eq, Hash, Debug)]
 pub struct HasPos(pub Pos);
+
+#[derive(Component)]
+pub struct HasVision {
+    pub radius: DimIndex,
+    fov: Option<Matrix<bool>>,
+    memory: Option<Matrix<bool>>,
+}
+
+impl HasVision {
+    pub fn new(radius: DimIndex) -> Self {
+        HasVision {
+            radius,
+            fov: None,
+            memory: None,
+        }
+    }
+    pub fn expire_fov(&mut self) {
+        self.fov = None;
+    }
+    pub fn fov(&self) -> Option<&Matrix<bool>> {
+        self.fov.as_ref()
+    }
+
+    pub fn set_fov(&mut self, m: Matrix<bool>) {
+        if self.memory.is_none() {
+            self.memory = Some(Matrix::new(m.width(), m.height()));
+        }
+        let mem = self.memory.as_mut().unwrap();
+        for (p, v) in m.iter() {
+            if *v {
+                mem[p] = true;
+            }
+        }
+        self.fov = Some(m);
+    }
+
+    pub fn memory(&self) -> Option<&Matrix<bool>> {
+        self.memory.as_ref()
+    }
+}
