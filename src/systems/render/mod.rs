@@ -6,7 +6,6 @@ use log::warn;
 use specs::prelude::*;
 
 pub type Color = ::tcod::Color;
-pub const RED: Color = ::tcod::colors::RED;
 pub const LIGHT_GROUND: Color = tcod::colors::GREY;
 pub const LIGHT_WALL: Color = tcod::colors::GREY;
 pub trait Renderable {

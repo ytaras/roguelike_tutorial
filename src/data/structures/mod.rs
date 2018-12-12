@@ -7,6 +7,7 @@ pub mod dim;
 mod level_data;
 pub mod matrix;
 pub mod pos;
+pub mod world_data;
 
 #[derive(Debug)]
 pub enum GameCommand {

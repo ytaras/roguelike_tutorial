@@ -1,8 +1,17 @@
 use crate::common::gen::Gen;
+use crate::data::structures::pos::PosCollection;
+use crate::data::structures::world_data::MonsterTemplate;
 use crate::data::structures::*;
+use crate::levels::generators::mosters::MonsterGeneratorParam;
 use itertools::free::any;
-use log::trace;
+use itertools::Itertools;
+use log::{trace, warn};
+use rand::seq::{IteratorRandom, SliceRandom};
 use rand::Rng;
+use std::collections::HashSet;
+use std::ops::Range;
+
+pub mod mosters;
 
 #[derive(Debug, Clone, Copy)]
 pub struct RoomGenStrategy {
@@ -15,7 +24,7 @@ pub struct RoomGenStrategy {
 impl Gen for Room {
     type Param = RoomGenStrategy;
 
-    fn create<G>(rng: &mut G, param: <Self as Gen>::Param) -> Self
+    fn create<G>(rng: &mut G, param: &<Self as Gen>::Param) -> Self
     where
         G: Rng,
     {
@@ -30,27 +39,31 @@ impl Gen for Room {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct RoomsGenStrategy {
+#[derive(Debug, Clone)]
+pub struct LevelGenStrategy {
     pub room_strategy: RoomGenStrategy,
     pub max_rooms: usize,
+    pub monsters: Range<u8>,
+    pub monster_strategy: MonsterGeneratorParam,
 }
 
-pub struct Rooms {
+pub struct Level {
     pub rooms: Vec<Room>,
     pub corridors: Vec<LCorridor>,
+    pub player_pos: Pos,
+    pub monsters: Vec<(MonsterTemplate, Pos)>,
 }
 
-impl Gen for Rooms {
-    type Param = RoomsGenStrategy;
+impl Gen for Level {
+    type Param = LevelGenStrategy;
 
-    fn create<G>(rng: &mut G, param: <Self as Gen>::Param) -> Self
+    fn create<G>(rng: &mut G, param: &<Self as Gen>::Param) -> Self
     where
         G: Rng,
     {
         let mut rooms: Vec<Room> = Vec::new();
         for _ in 0..param.max_rooms {
-            let room = Room::create(rng, param.room_strategy);
+            let room = Room::create(rng, &param.room_strategy);
             let conflicts = any(rooms.iter(), |r| r.intersects(&room));
             if !conflicts {
                 rooms.push(room);
@@ -78,7 +91,31 @@ impl Gen for Rooms {
             ));
         }
 
-        Rooms { rooms, corridors }
+        let player_pos = rooms[0].center();
+
+        let mut free_pos = rooms.iter().flat_map(|r| r.iter_pos()).collect::<Vec<_>>();
+
+        let monster_count = rng.gen_range(param.monsters.start, param.monsters.end);
+
+        let mut monsters = Vec::with_capacity(monster_count.into());
+        for _ in 0..monster_count {
+            let monster_template = MonsterTemplate::create(rng, &param.monster_strategy);
+
+            if free_pos.is_empty() {
+                log::warn!("No more free cells left, level gen strategy: {:?}", param);
+            } else {
+                let pos_index = rng.gen_range(0, free_pos.len());
+                let pos = free_pos.remove(pos_index);
+                monsters.push((monster_template, pos));
+            }
+        }
+
+        Level {
+            rooms,
+            corridors,
+            player_pos,
+            monsters,
+        }
     }
 }
 
@@ -86,7 +123,7 @@ impl Gen for Rooms {
 mod test {
     use super::*;
     use crate::data::structures::pos::test::*;
-    use crate::data::structures::room::test::*;
+    use crate::levels::races::ALL_MONSTERS;
     use itertools::iproduct;
     use proptest::prelude::*;
     use proptest::{prop_assert, proptest, proptest_helper};
@@ -134,10 +171,14 @@ mod test {
             .boxed()
     }
 
-    fn rooms_gen_strategy() -> impl Strategy<Value = RoomsGenStrategy> {
-        (room_gen_strategy(), 1..30).prop_map(|(room_strategy, max_rooms)| RoomsGenStrategy {
+    fn rooms_gen_strategy() -> impl Strategy<Value = LevelGenStrategy> {
+        (room_gen_strategy(), 1..30).prop_map(|(room_strategy, max_rooms)| LevelGenStrategy {
             room_strategy,
             max_rooms: max_rooms as usize,
+            monsters: 20..30,
+            monster_strategy: MonsterGeneratorParam {
+                templates: ALL_MONSTERS(),
+            },
         })
     }
 
@@ -146,7 +187,7 @@ mod test {
         #[test]
         fn room_gen_generates_room_in_bounds(rgs in room_gen_strategy()) {
             let mut rng = rand::thread_rng();
-            let room = Room::create(&mut rng, rgs);
+            let room = Room::create(&mut rng, &rgs);
             prop_assert!(room.from.x >= rgs.min_pos.x);
             prop_assert!(room.from.y >= rgs.min_pos.y);
             prop_assert!(room.to.x   <= rgs.max_pos.x);
@@ -161,7 +202,7 @@ mod test {
         #[test]
         fn rooms_gen_generates_room_in_bounds(rgs in rooms_gen_strategy()) {
             let mut rng = rand::thread_rng();
-            let rooms = Rooms::create(&mut rng, rgs);
+            let rooms = Level::create(&mut rng, &rgs);
             prop_assert!(rooms.rooms.len() <= rgs.max_rooms);
             let rgs = rgs.room_strategy;
             for room in rooms.rooms.clone() {
