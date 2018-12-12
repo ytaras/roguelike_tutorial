@@ -5,6 +5,9 @@ use specs::prelude::*;
 use crate::data::components::*;
 use crate::data::structures::*;
 
+pub mod fov;
+pub use self::fov::*;
+
 #[derive(Default)]
 pub struct AssertUnique<T: Component> {
     component_type: PhantomData<T>,

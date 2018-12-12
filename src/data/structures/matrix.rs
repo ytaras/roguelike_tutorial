@@ -18,22 +18,31 @@ pub struct Matrix<T> {
 
 impl<T> Matrix<T> {
     fn max_pos(&self) -> InternalIndex {
-        self.width as InternalIndex * self.height as InternalIndex
+        Self::max_index(self)
+    }
+
+    fn max_index<D: HasDim>(d: &D) -> InternalIndex {
+        d.width() as InternalIndex * d.height() as InternalIndex
+    }
+
+    fn index_to_pos<D: HasDim>(d: &D, i: InternalIndex) -> Pos {
+        assert!(i <= Self::max_index(d));
+        let x: DimIndex = (i % d.width() as InternalIndex) as DimIndex;
+        let y: DimIndex = (i / d.width() as InternalIndex) as DimIndex;
+        Pos { x, y }
     }
 
     fn to_pos(&self, i: InternalIndex) -> Pos {
-        assert!(i < self.max_pos());
-        let x: DimIndex = (i % self.width as InternalIndex) as DimIndex;
-        let y: DimIndex = (i / self.width as InternalIndex) as DimIndex;
-        Pos { x, y }
-    }
-    fn to_index(&self, pos: Pos) -> InternalIndex {
-        assert!(self.is_valid(pos));
-        pos.x as InternalIndex + pos.y as InternalIndex * self.width as InternalIndex
+        Self::index_to_pos(self, i)
     }
 
-    pub fn is_valid(&self, p: Pos) -> bool {
-        p.x < self.width && p.y < self.height
+    fn pos_to_index<D: HasDim>(d: &D, pos: Pos) -> InternalIndex {
+        assert!(d.is_valid(pos));
+        pos.x as InternalIndex + pos.y as InternalIndex * d.width() as InternalIndex
+    }
+
+    fn to_index(&self, pos: Pos) -> InternalIndex {
+        Self::pos_to_index(self, pos)
     }
 
     pub fn height(&self) -> DimIndex {
@@ -55,6 +64,27 @@ impl<T> Matrix<T> {
         Dim {
             width: self.width,
             height: self.height,
+        }
+    }
+
+    pub fn tabulate<F>(dim: Dim, mut f: F) -> Matrix<T>
+    where
+        F: FnMut(Pos) -> T,
+    {
+        assert!(dim.height > 0);
+        assert!(dim.width > 0);
+
+        let max_index = Self::max_index(&dim);
+        let mut v = Vec::with_capacity(max_index + 1);
+        for i in 0..max_index {
+            let pos = Self::index_to_pos(&dim, i);
+            let value = f(pos);
+            v.push(value);
+        }
+        Matrix {
+            data: v,
+            width: dim.width,
+            height: dim.height,
         }
     }
 }
@@ -83,6 +113,16 @@ impl<'a, T> IndexMut<Pos> for Matrix<T> {
     fn index_mut(&mut self, p: Pos) -> &mut T {
         let i = self.to_index(p);
         &mut self.data[i]
+    }
+}
+
+impl<T> HasDim for Matrix<T> {
+    fn width(&self) -> u8 {
+        self.width
+    }
+
+    fn height(&self) -> u8 {
+        self.height
     }
 }
 
@@ -122,9 +162,12 @@ mod test {
 
     use itertools::*;
     use proptest::prelude::*;
-    use proptest::{prop_assert, prop_assert_eq, prop_compose, proptest, proptest_helper};
+    use proptest::{
+        prop_assert, prop_assert_eq, prop_assume, prop_compose, proptest, proptest_helper,
+    };
 
     use super::*;
+    use crate::data::structures::dim::*;
 
     impl<T: Debug + Default + Clone> Arbitrary for Matrix<T> {
         type Parameters = ();
@@ -215,6 +258,15 @@ mod test {
         fn iter_pos_returs_only_valid(m: Matrix<bool>) {
             for p in m.iter_pos() {
                 prop_assert!(m.is_valid(p));
+            }
+        }
+
+        #[test]
+        fn tabulate_populates_with_correct_data(dim: Dim) {
+            prop_assume!(dim.width > 0 && dim.height > 0);
+            let tabulated = Matrix::tabulate(dim, |pos| pos);
+            for (p, v) in tabulated.iter() {
+                prop_assert_eq!(p, *v);
             }
         }
 

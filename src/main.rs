@@ -23,6 +23,7 @@ fn main() {
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
+    world.register::<HasVision>();
 
     let (level, room) = level_1(&mut rand::thread_rng());
     let player_pos = room.center();

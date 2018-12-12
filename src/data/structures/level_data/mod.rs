@@ -8,7 +8,7 @@ pub mod room;
 pub use self::corridor::*;
 pub use self::room::*;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TileType {
     Wall,
     Ground,
@@ -67,6 +67,16 @@ impl PosCollection for LevelInfo {
 
     fn iter_pos(&self) -> Self::Iter {
         self.data.iter_pos()
+    }
+}
+
+impl HasDim for LevelInfo {
+    fn width(&self) -> DimIndex {
+        self.data.width()
+    }
+
+    fn height(&self) -> DimIndex {
+        self.data.height()
     }
 }
 

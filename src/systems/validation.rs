@@ -37,14 +37,13 @@ impl<'a> Validation<'a> for MoveValidation {
 mod tests {
     use specs::{Builder, World};
 
+    use super::*;
     use crate::data::components::*;
     use crate::data::structures::LevelInfo;
     use crate::data::structures::Pos;
     use crate::data::structures::TileType::*;
     use crate::data::structures::{E, S};
-    use crate::systems::render::YELLOW;
-
-    use super::*;
+    use tcod::colors::YELLOW;
 
     fn create_world(add_wall: bool) -> World {
         let mut w = World::new();

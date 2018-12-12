@@ -17,6 +17,10 @@ pub trait HasDim {
             y: self.height() - 1,
         }
     }
+
+    fn is_valid(&self, p: Pos) -> bool {
+        p.x < self.width() && p.y < self.height()
+    }
 }
 
 impl HasDim for Dim {
@@ -46,5 +50,15 @@ pub mod test {
         (0..=max_dim.width, 0..=max_dim.height)
             .prop_map(|(width, height)| Dim { width, height })
             .boxed()
+    }
+
+    impl Arbitrary for Dim {
+        type Parameters = ();
+
+        fn arbitrary_with(_args: <Self as Arbitrary>::Parameters) -> <Self as Arbitrary>::Strategy {
+            dim(MAX_DIM)
+        }
+
+        type Strategy = BoxedStrategy<Dim>;
     }
 }

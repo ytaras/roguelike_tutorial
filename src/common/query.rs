@@ -3,6 +3,13 @@ use std::hash::Hash;
 
 use specs::prelude::*;
 
+pub fn singleton<T, R>(joinable: T) -> Result<R, ()>
+where
+    T: Join<Type = R>,
+{
+    unique(joinable).and_then(|opt| opt.ok_or(()))
+}
+
 pub fn unique<T, R>(joinable: T) -> Result<Option<R>, ()>
 where
     T: Join<Type = R>,

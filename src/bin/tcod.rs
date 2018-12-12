@@ -36,6 +36,7 @@ fn main() {
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
+    world.register::<HasVision>();
 
     let mut rng = rand::thread_rng();
     // FXIME Extract to script
@@ -55,6 +56,7 @@ fn main() {
     let mut game = Game::new(world);
 
     while !root.window_closed() {
+        game.update();
         game.render_on(&mut root);
 
         root.flush();
@@ -63,6 +65,5 @@ fn main() {
             trace!("{:?} - {:?}", x, c);
             game.game_command_handler.exec(c, &mut game.world);
         }
-        game.update();
     }
 }
