@@ -29,9 +29,7 @@ pub mod test {
     use crate::data::structures::pos::test::*;
     use crate::data::structures::room::test::*;
     use proptest::prelude::*;
-    use proptest::{
-        prop_assert, prop_assert_eq, prop_assert_ne, prop_compose, proptest, proptest_helper,
-    };
+    use proptest::{prop_assert, proptest, proptest_helper};
     use std::cmp::{max, min};
 
     pub fn level_and_room() -> BoxedStrategy<(LevelInfo, Room)> {

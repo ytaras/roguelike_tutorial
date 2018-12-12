@@ -167,7 +167,6 @@ mod test {
     };
 
     use super::*;
-    use crate::data::structures::dim::*;
 
     impl<T: Debug + Default + Clone> Arbitrary for Matrix<T> {
         type Parameters = ();

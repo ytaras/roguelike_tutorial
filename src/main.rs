@@ -10,6 +10,7 @@ use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
 use rogue_tutorial::levels::level_1;
 use rogue_tutorial::systems::render::*;
+use tcod::colors::RED;
 
 const CONSOLE_DIM: Dim = Dim {
     width: 90,
@@ -25,16 +26,21 @@ fn main() {
     world.register::<TakesWholeTile>();
     world.register::<HasVision>();
 
-    let (level, room) = level_1(&mut rand::thread_rng());
-    let player_pos = room.center();
+    let mut rng = rand::thread_rng();
+    // FXIME Extract to script
+    let (level_info, level) = level_1(&mut rng);
 
-    world.add_resource(level);
+    world.add_resource(level_info);
 
     world
         .create_entity()
         .is_player()
-        .with_actor_components('@', RED, player_pos)
+        .with_actor_components('@', RED, level.player_pos)
         .build();
+
+    for (monster, pos) in level.monsters {
+        world.create_entity().is_monster(&monster, pos).build();
+    }
 
     let mut app = App::new(AppOptions {
         console_width: CONSOLE_DIM.width.into(),

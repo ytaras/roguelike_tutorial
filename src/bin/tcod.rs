@@ -11,6 +11,7 @@ use rogue_tutorial::levels::level_1;
 use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::Game;
 use specs::prelude::*;
+use tcod::colors::RED;
 use tcod::*;
 
 const CONSOLE_DIM: Dim = Dim {
@@ -40,16 +41,19 @@ fn main() {
 
     let mut rng = rand::thread_rng();
     // FXIME Extract to script
-    let (level, room) = level_1(&mut rng);
-    let player_pos = room.center();
+    let (level_info, level) = level_1(&mut rng);
 
-    world.add_resource(level);
+    world.add_resource(level_info);
 
     world
         .create_entity()
         .is_player()
-        .with_actor_components('@', RED, player_pos)
+        .with_actor_components('@', RED, level.player_pos)
         .build();
+
+    for (monster, pos) in level.monsters {
+        world.create_entity().is_monster(&monster, pos).build();
+    }
 
     tcod::system::set_fps(LIMIT_FPS);
 

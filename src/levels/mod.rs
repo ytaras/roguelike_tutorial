@@ -6,23 +6,26 @@ use rand::Rng;
 
 pub mod functions;
 pub mod generators;
+pub mod races;
 
 pub use self::functions::*;
+use crate::levels::generators::mosters::MonsterGeneratorParam;
+use crate::levels::generators::Level;
+use crate::levels::generators::LevelGenStrategy;
 use crate::levels::generators::RoomGenStrategy;
-use crate::levels::generators::Rooms;
-use crate::levels::generators::RoomsGenStrategy;
+use crate::levels::races::ALL_MONSTERS;
 
 const MAP_DIM: Dim = Dim {
     width: 90,
     height: 45,
 };
 
-pub fn level_1<G>(rng: &mut G) -> (LevelInfo, Room)
+pub fn level_1<G>(rng: &mut G) -> (LevelInfo, Level)
 where
     G: Rng,
 {
     let mut level = LevelInfo::with_dim(MAP_DIM);
-    let strategy = RoomsGenStrategy {
+    let strategy = LevelGenStrategy {
         room_strategy: RoomGenStrategy {
             max_dim: Dim {
                 height: 10,
@@ -36,16 +39,20 @@ where
             min_pos: Pos::default().e().s(),
         },
         max_rooms: 30,
+        monsters: 20..30,
+        monster_strategy: MonsterGeneratorParam {
+            templates: ALL_MONSTERS(),
+        },
     };
 
-    let rooms = Rooms::create(rng, strategy);
-    let room1 = rooms.rooms[0];
-    for room in rooms.rooms {
-        dig(&mut level, &room);
-        put_walls(&mut level, &room);
+    let rooms = Level::create(rng, &strategy);
+    for room in &rooms.rooms {
+        dig(&mut level, room);
+        put_walls(&mut level, room);
     }
-    for corridor in rooms.corridors {
-        dig(&mut level, &corridor);
+    for corridor in &rooms.corridors {
+        dig(&mut level, corridor);
     }
-    (level, room1)
+
+    (level, rooms)
 }

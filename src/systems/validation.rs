@@ -38,7 +38,6 @@ mod tests {
     use specs::{Builder, World};
 
     use super::*;
-    use crate::data::components::*;
     use crate::data::structures::LevelInfo;
     use crate::data::structures::Pos;
     use crate::data::structures::TileType::*;
