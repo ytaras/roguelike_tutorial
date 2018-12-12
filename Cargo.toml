@@ -1,6 +1,6 @@
 [package]
 name = "rogue_tutorial"
-version = "0.3.2-alpha.0"
+version = "0.3.2"
 authors = ["Yuriy Taras <ytaras@softserveinc.com>"]
 publish = false
 edition = "2018"
