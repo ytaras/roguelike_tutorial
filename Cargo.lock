@@ -951,7 +951,7 @@ dependencies = [
 
 [[package]]
 name = "rogue_tutorial"
-version = "0.4.0"
+version = "0.4.1-alpha.0"
 dependencies = [
  "doryen-rs 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "itertools 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
