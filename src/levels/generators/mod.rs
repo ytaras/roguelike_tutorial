@@ -97,6 +97,8 @@ impl Gen for Level {
 
         let monster_count = rng.gen_range(param.monsters.start, param.monsters.end);
 
+
+
         let mut monsters = Vec::with_capacity(monster_count.into());
         for _ in 0..monster_count {
             let monster_template = MonsterTemplate::create(rng, &param.monster_strategy);
