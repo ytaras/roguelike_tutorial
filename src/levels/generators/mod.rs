@@ -6,7 +6,7 @@ use crate::levels::generators::mosters::MonsterGeneratorParam;
 use itertools::free::any;
 use itertools::Itertools;
 use log::{trace, warn};
-use rand::seq::{IteratorRandom, SliceRandom};
+use rand::seq::IteratorRandom;
 use rand::Rng;
 use std::collections::HashSet;
 use std::ops::Range;
@@ -96,8 +96,6 @@ impl Gen for Level {
         let mut free_pos = rooms.iter().flat_map(|r| r.iter_pos()).collect::<Vec<_>>();
 
         let monster_count = rng.gen_range(param.monsters.start, param.monsters.end);
-
-
 
         let mut monsters = Vec::with_capacity(monster_count.into());
         for _ in 0..monster_count {

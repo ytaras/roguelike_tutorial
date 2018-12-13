@@ -1,35 +1,43 @@
-use specs::Read;
-use specs::ReadStorage;
+use specs::prelude::*;
 
 use crate::common::query::*;
 use crate::common::validations::Validation;
 use crate::data::components::*;
+use crate::data::structures::*;
 use crate::data::structures::{CellObject, Dir, LevelInfo};
+use std::collections::HashMap;
 
 #[derive(Debug, Default)]
 pub struct MoveValidation;
 
 impl<'a> Validation<'a> for MoveValidation {
     type Input = Dir;
-    type Output = Option<Dir>;
+    type Output = Option<ActorCommand>;
     type SD = (
         ReadStorage<'a, HasPos>,
         ReadStorage<'a, IsPlayer>,
         ReadStorage<'a, TakesWholeTile>,
+        Entities<'a>,
         Read<'a, LevelInfo>,
     );
 
-    fn run(&self, move_dir: Dir, (pos_storage, pl, tile, level): Self::SD) -> Self::Output {
-        let res: Option<Dir> = unique((&pos_storage, &pl))
-            .unwrap()
+    fn run(&self, move_dir: Dir, (pos_storage, pl, tile, entity, level): Self::SD) -> Self::Output {
+        let target_pos: Pos = singleton((&pos_storage, &pl))
             .map(|(ref mut player_pos, _)| player_pos.0 + move_dir)
-            .filter(|new_pos| level.is_valid(*new_pos) && level[*new_pos].is_walkable())
-            .filter(|new_pos| {
-                let existing_entities = hash(&pos_storage, &tile);
-                !existing_entities.contains_key(&HasPos(*new_pos))
-            })
-            .map(|_| move_dir);
-        res
+            .unwrap();
+        if !level.is_valid(target_pos) || !level[target_pos].is_walkable() {
+            return None;
+        }
+
+        for (e, pos, _) in (&entity, &pos_storage, &tile).join() {
+            if pos.0 == target_pos {
+                return Some(ActorCommand::MeleeAttack {
+                    pos: target_pos,
+                    target: e,
+                });
+            }
+        }
+        Some(ActorCommand::Move(move_dir))
     }
 }
 
@@ -79,19 +87,28 @@ mod tests {
     }
 
     #[test]
-    fn dont_allow_to_walk_into_someone() {
+    fn converts_move_into_someone_to_atack() {
         let mut w = create_world(false);
-        w.create_entity()
-            .with_actor_components('@', YELLOW, Pos { x: 0, y: 1 })
+        let target_pos = Pos { x: 0, y: 1 };
+        let e = w
+            .create_entity()
+            .with_actor_components('@', YELLOW, target_pos)
             .build();
-        let result = MoveValidation.exec(S, &mut w);
-        assert!(result.is_none());
+        let result = MoveValidation.exec(S, &mut w).unwrap();
+
+        assert_eq!(
+            result,
+            ActorCommand::MeleeAttack {
+                pos: target_pos,
+                target: e
+            }
+        );
     }
 
     #[test]
     fn allow_to_walk_on_the_ground() {
         let mut w = create_world(false);
         let result = MoveValidation.exec(S, &mut w);
-        assert_eq!(Some(S), result);
+        assert_eq!(Some(ActorCommand::Move(S)), result);
     }
 }

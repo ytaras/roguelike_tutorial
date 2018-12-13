@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+xs 4166605256 364604075 3972378625 75050288 # shrinks to rgs = LevelGenStrategy { room_strategy: RoomGenStrategy { min_dim: Dim { width: 4, height: 4 }, max_dim: Dim { width: 9, height: 4 }, max_pos: Pos { x: 58, y: 248 }, min_pos: Pos { x: 42, y: 243 } }, max_rooms: 21, monsters: 20..30, monster_strategy: MonsterGeneratorParam { templates: [MonsterTemplate { race: Some(Race { default_char: 'o', default_color: Color { r: 63, g: 127, b: 63 } }) }, MonsterTemplate { race: Some(Race { default_char: 'T', default_color: Color { r: 0, g: 127, b: 0 } }) }] } }

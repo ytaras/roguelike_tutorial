@@ -57,6 +57,17 @@ pub struct HasVision {
     memory: Option<Matrix<bool>>,
 }
 
+#[derive(Component, Default)]
+pub struct HasDamage {
+    pub hp_damage: i32,
+}
+
+impl HasDamage {
+    pub fn hp(hp_damage: i32) -> Self {
+        HasDamage { hp_damage }
+    }
+}
+
 impl HasVision {
     pub fn new(radius: DimIndex) -> Self {
         HasVision {
