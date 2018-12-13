@@ -30,7 +30,7 @@ impl ExecuteCommands {
         if let Some(d) = dam_storage.get_mut(target) {
             d.hp_damage += damage;
         } else {
-            dam_storage.insert(target, HasDamage::hp(damage));
+            dam_storage.insert(target, HasDamage::hp(damage)).unwrap();
         }
     }
 }
@@ -109,8 +109,8 @@ mod tests {
         #[test]
         fn move_moves() {
             let mut w = World::new();
-            w.register::<HasPos>();
-            w.register::<PlansExecuting>();
+            let mut s = ExecuteCommands;
+            <ExecuteCommands as System>::setup(&mut s, &mut w.res);
 
             let e = w
                 .create_entity()

@@ -7,27 +7,38 @@ use crate::systems::logic::*;
 use crate::systems::validation::MoveValidation;
 
 use self::keymapper::*;
+use crate::systems::render::RenderWrapper;
 use crate::systems::render::Renderer;
+use std::marker::PhantomData;
 
 mod keymapper;
 
-pub struct Game {
+pub struct Game<'a, 'b> {
     pub world: World,
     pub key_mapper: KeyMapper,
     pub game_command_handler: GameCommandHandler,
-    fov: Fov,
+    tick_dispatcher: Dispatcher<'a, 'b>,
 }
 
-impl Game {
-    pub fn new(world: World) -> Self {
+impl<'a, 'b> Game<'a, 'b> {
+    pub fn new(mut world: World) -> Self {
         let key_mapper = KeyMapper::default();
         let game_command_handler = GameCommandHandler;
+
+        let mut tick_dispatcher = DispatcherBuilder::new()
+            .with(ExecuteCommands, "execute_commands", &[])
+            .with(Fov::default(), "fov", &[])
+            .with(ExecuteDamage, "execute_damage", &["execute_commands"])
+            .build();
+
+        tick_dispatcher.setup(&mut world.res);
+        game_command_handler.setup(&mut world);
 
         Game {
             world,
             key_mapper,
             game_command_handler,
-            fov: Fov::default(),
+            tick_dispatcher,
         }
     }
 
@@ -37,11 +48,7 @@ impl Game {
     }
 
     pub fn update(&mut self) {
-        use specs::RunNow;
-        // TODO Dispatcher
-        self.fov.run_now(&self.world.res);
-        ExecuteCommands.run_now(&self.world.res);
-        ExecuteDamage.run_now(&self.world.res);
+        self.tick_dispatcher.dispatch(&self.world.res);
         self.world.maintain();
     }
 }
@@ -49,6 +56,11 @@ impl Game {
 pub struct GameCommandHandler;
 
 impl GameCommandHandler {
+    pub fn setup(&self, res: &mut World) {
+        res.register::<IsPlayer>();
+        res.register::<TakesWholeTile>();
+    }
+
     // FIXME - Use validation framework for everyone here
     pub fn exec(&self, gc: &Command, world: &mut World) {
         match gc {

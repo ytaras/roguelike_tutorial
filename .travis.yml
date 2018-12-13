@@ -30,7 +30,7 @@ matrix:
     rust: stable
     install:
       - rustup component add clippy-preview
-      - cargo clippy --all-features
+      - cargo clippy --features render_tcod,render_doryen
 
 os:
 - linux
