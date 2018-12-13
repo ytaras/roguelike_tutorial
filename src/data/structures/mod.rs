@@ -2,6 +2,7 @@ use std::convert::From;
 
 pub use self::level_data::*;
 pub use self::matrix::{Dim, DimIndex, HasDim, Pos};
+use specs::Entity;
 
 pub mod dim;
 mod level_data;
@@ -13,9 +14,10 @@ pub mod world_data;
 pub enum GameCommand {
     Exit,
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ActorCommand {
     Move(Dir),
+    MeleeAttack { pos: Pos, target: Entity },
 }
 
 #[derive(Debug)]

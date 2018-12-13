@@ -7,6 +7,8 @@ use crate::data::structures::*;
 
 pub mod fov;
 pub use self::fov::*;
+pub mod damage;
+pub use self::damage::*;
 
 #[derive(Default)]
 pub struct AssertUnique<T: Component> {
@@ -23,14 +25,26 @@ impl<'a, T: Component> System<'a> for AssertUnique<T> {
 
 pub struct ExecuteCommands;
 
+impl ExecuteCommands {
+    fn add_hp_damage(dam_storage: &mut WriteStorage<HasDamage>, target: Entity, damage: i32) {
+        if let Some(d) = dam_storage.get_mut(target) {
+            d.hp_damage += damage;
+        } else {
+            dam_storage.insert(target, HasDamage::hp(damage));
+        }
+    }
+}
+
 impl<'a> System<'a> for ExecuteCommands {
     type SystemData = (
         Entities<'a>,
         WriteStorage<'a, HasPos>,
         WriteStorage<'a, PlansExecuting>,
+        WriteStorage<'a, HasDamage>,
         Read<'a, LazyUpdate>,
     );
-    fn run(&mut self, (e, mut pos, mut plan_storage, lu): Self::SystemData) {
+
+    fn run(&mut self, (e, mut pos, mut plan_storage, mut dam_storage, lu): Self::SystemData) {
         use specs::Join;
 
         for (e, pos, plan) in (&e, &mut pos, &mut plan_storage).join() {
@@ -38,6 +52,10 @@ impl<'a> System<'a> for ExecuteCommands {
             match plan.0 {
                 ActorCommand::Move(ref dir) => {
                     pos += dir;
+                }
+                ActorCommand::MeleeAttack { pos, target } => {
+                    log::info!("Atacking {:?} at {:?}", target, pos);
+                    Self::add_hp_damage(&mut dam_storage, target, 1);
                 }
             }
             lu.remove::<PlansExecuting>(e);

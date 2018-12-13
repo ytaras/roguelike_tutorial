@@ -41,6 +41,7 @@ impl Game {
         // TODO Dispatcher
         self.fov.run_now(&self.world.res);
         ExecuteCommands.run_now(&self.world.res);
+        ExecuteDamage.run_now(&self.world.res);
         self.world.maintain();
     }
 }
@@ -62,6 +63,7 @@ impl GameCommandHandler {
                 system.run_now(&world.res);
 
                 match ac {
+                    ActorCommand::MeleeAttack { .. } => unreachable!(),
                     ActorCommand::Move(dir) => {
                         if let Some(res) = MoveValidation::default().exec(*dir, world) {
                             // TODO Extract exec to system or provide helper methods - to decide
@@ -72,8 +74,7 @@ impl GameCommandHandler {
                             ) = world.system_data();
                             use specs::Join;
                             for (e, _) in (&e, &ispl).join() {
-                                pl.insert(e, PlansExecuting::new(ActorCommand::Move(res)))
-                                    .unwrap();
+                                pl.insert(e, PlansExecuting::new(res)).unwrap();
                             }
                         }
                     }

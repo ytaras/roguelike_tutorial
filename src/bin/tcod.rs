@@ -38,6 +38,7 @@ fn main() {
     world.register::<PlansExecuting>();
     world.register::<TakesWholeTile>();
     world.register::<HasVision>();
+    world.register::<HasDamage>();
 
     let mut rng = rand::thread_rng();
     // FXIME Extract to script
