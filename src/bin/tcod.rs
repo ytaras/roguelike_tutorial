@@ -8,9 +8,10 @@ extern crate specs;
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
 use rogue_tutorial::levels::level_1;
+use rogue_tutorial::systems::render::Renderer;
 use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::Game;
-use specs::prelude::*;
+use specs::{Builder, EntityBuilder, System, World};
 use tcod::colors::RED;
 use tcod::*;
 
@@ -32,33 +33,25 @@ fn main() {
 
     // FXIME - Extrqct to world generation
     let mut world = World::new();
-    world.register::<HasPos>();
-    world.register::<IsVisible>();
-    world.register::<IsPlayer>();
-    world.register::<PlansExecuting>();
-    world.register::<TakesWholeTile>();
-    world.register::<HasVision>();
-    world.register::<HasDamage>();
-
+    root.as_specs_system().setup(&mut world.res);
+    let mut game = Game::new(world);
     let mut rng = rand::thread_rng();
     // FXIME Extract to script
     let (level_info, level) = level_1(&mut rng);
 
-    world.add_resource(level_info);
+    game.world.add_resource(level_info);
 
-    world
+    game.world
         .create_entity()
         .is_player()
         .with_actor_components('@', RED, level.player_pos)
         .build();
 
     for (monster, pos) in level.monsters {
-        world.create_entity().is_monster(&monster, pos).build();
+        game.world.create_entity().is_monster(&monster, pos).build();
     }
 
     tcod::system::set_fps(LIMIT_FPS);
-
-    let mut game = Game::new(world);
 
     while !root.window_closed() {
         game.update();

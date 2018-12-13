@@ -6,12 +6,12 @@ use doryen_rs::*;
 use specs::prelude::*;
 
 // FIXME find better names
-pub struct GameContext {
+pub struct GameContext<'a, 'b> {
     renderer: DoryenRenderer,
-    game: Game,
+    game: Game<'a, 'b>,
 }
 
-impl GameContext {
+impl<'a, 'b> GameContext<'a, 'b> {
     pub fn from_specs(mut w: World) -> Self {
         let console: doryen_rs::Console = w.exec(|level_info: Read<LevelInfo>| {
             doryen_rs::Console::new(level_info.width().into(), level_info.height().into())
@@ -52,7 +52,7 @@ impl Renderer for DoryenRenderer {
     }
 }
 
-impl Engine for GameContext {
+impl<'a, 'b> Engine for GameContext<'a, 'b> {
     fn update(&mut self, api: &mut DoryenApi) {
         let input = api.input();
         for (key, command) in self.game.key_mapper.commands() {
