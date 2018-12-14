@@ -1,12 +1,13 @@
-use crate::data::components::HasDamage;
 use specs::prelude::*;
+
+use crate::data::components::HasEffectStack;
 
 pub struct ExecuteDamage;
 
 impl<'a> System<'a> for ExecuteDamage {
     type SystemData = (
         Entities<'a>,
-        ReadStorage<'a, HasDamage>,
+        ReadStorage<'a, HasEffectStack>,
         Read<'a, LazyUpdate>,
     );
 
@@ -16,7 +17,7 @@ impl<'a> System<'a> for ExecuteDamage {
         for (e, _) in (&ent, &dam).join() {
             log::info!("Removing {:?}", e);
             lazy.exec_mut(move |world| {
-                world.delete_entity(e);
+                world.delete_entity(e).unwrap();
             });
         }
     }

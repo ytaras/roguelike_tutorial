@@ -17,10 +17,6 @@ pub struct Matrix<T> {
 }
 
 impl<T> Matrix<T> {
-    fn max_pos(&self) -> InternalIndex {
-        Self::max_index(self)
-    }
-
     fn max_index<D: HasDim>(d: &D) -> InternalIndex {
         d.width() as InternalIndex * d.height() as InternalIndex
     }

@@ -1,7 +1,7 @@
-use crate::data::structures::*;
-use log::trace;
 use std::collections::hash_map::Iter;
 use std::collections::HashMap;
+
+use crate::data::structures::*;
 
 pub struct KeyMapper {
     game_commands: HashMap<String, Command>,
@@ -35,7 +35,7 @@ impl KeyMapper {
             Escape => Some("Escape"),
             _ => None,
         };
-        trace!("Maping for {:?} {:?}", key, mnem);
+        log::trace!("Maping for {:?} {:?}", key, mnem);
         mnem.and_then(|o| self.game_commands.get(o))
     }
 }

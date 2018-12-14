@@ -5,7 +5,6 @@ use crate::common::validations::Validation;
 use crate::data::components::*;
 use crate::data::structures::*;
 use crate::data::structures::{CellObject, Dir, LevelInfo};
-use std::collections::HashMap;
 
 #[derive(Debug, Default)]
 pub struct MoveValidation;
@@ -44,13 +43,14 @@ impl<'a> Validation<'a> for MoveValidation {
 #[cfg(test)]
 mod tests {
     use specs::{Builder, World};
+    use tcod::colors::YELLOW;
 
-    use super::*;
     use crate::data::structures::LevelInfo;
     use crate::data::structures::Pos;
     use crate::data::structures::TileType::*;
     use crate::data::structures::{E, S};
-    use tcod::colors::YELLOW;
+
+    use super::*;
 
     fn create_world(add_wall: bool) -> World {
         let mut w = World::new();

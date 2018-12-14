@@ -35,6 +35,6 @@ impl Renderable for MonsterTemplate {
     }
 
     fn display_char(&self) -> char {
-        self.race.map_or('M', |r| r.display_char())
+        self.race.map_or(DEFAULT_CHAR, |r| r.display_char())
     }
 }

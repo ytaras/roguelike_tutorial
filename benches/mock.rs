@@ -1,7 +1,6 @@
 #![feature(test)]
 extern crate rogue_tutorial;
 extern crate specs;
-#[macro_use]
 extern crate specs_derive;
 extern crate test;
 

@@ -3,12 +3,12 @@ extern crate itertools;
 extern crate rogue_tutorial;
 extern crate test;
 
+use test::Bencher;
+
 use itertools::*;
+
 use rogue_tutorial::data::structures::matrix::PosCollection;
 use rogue_tutorial::data::structures::*;
-use std::collections::BTreeSet;
-use std::collections::HashSet;
-use test::Bencher;
 
 #[bench]
 fn uniqueness_testing_pos(b: &mut Bencher) {
