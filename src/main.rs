@@ -22,7 +22,6 @@ fn main() {
     world.register::<IsVisible>();
     world.register::<IsPlayer>();
     world.register::<PlansExecuting>();
-    world.register::<TakesWholeTile>();
     world.register::<HasVision>();
 
     let mut rng = rand::thread_rng();

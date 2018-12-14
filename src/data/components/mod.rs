@@ -7,6 +7,7 @@ use crate::systems::render::Color;
 use super::structures::*;
 
 pub use self::builder::*;
+use std::cmp::max;
 
 mod builder;
 
@@ -37,9 +38,6 @@ pub struct IsVisible {
 #[derive(Component, Debug, Default)]
 pub struct IsPlayer;
 
-#[derive(Component, Debug, Default)]
-pub struct TakesWholeTile;
-
 #[derive(Component, Debug, PartialEq)]
 pub struct PlansExecuting(pub ActorCommand);
 impl PlansExecuting {
@@ -58,14 +56,15 @@ pub struct HasVision {
     memory: Option<Matrix<bool>>,
 }
 
-#[derive(Component, Default)]
+type Attr = i32;
+#[derive(Component, Default, Debug)]
 pub struct HasEffectStack {
-    pub hp_damage: i32,
+    pub attack_power: Attr,
 }
 
 impl HasEffectStack {
-    pub fn hp(hp_damage: i32) -> Self {
-        HasEffectStack { hp_damage }
+    pub fn add_damage(&mut self, f: &IsFighter) {
+        self.attack_power += f.power;
     }
 }
 
@@ -104,3 +103,31 @@ impl HasVision {
 
 #[derive(Component)]
 pub struct HasBrain {}
+
+#[derive(Component, Clone, Debug)]
+pub struct IsFighter {
+    pub max_hp: Attr,
+    pub current_hp: Attr,
+    pub power: Attr,
+    pub defense: Attr,
+}
+
+impl IsFighter {
+    pub fn new(hp: Attr, power: Attr, defense: Attr) -> Self {
+        IsFighter {
+            max_hp: hp,
+            current_hp: hp,
+            power,
+            defense,
+        }
+    }
+
+    pub fn inflict_damage(&mut self, damage_power: Attr) {
+        let damage = max(0, damage_power - self.defense);
+        self.current_hp -= damage;
+    }
+
+    pub fn is_dead(&self) -> bool {
+        self.current_hp < 0
+    }
+}

@@ -6,10 +6,13 @@ use crate::data::components::*;
 use crate::data::structures::*;
 
 pub use self::ai::*;
+pub use self::clean::*;
 pub use self::damage::*;
 pub use self::fov::*;
+use specs::error::Error;
 
 pub mod ai;
+pub mod clean;
 pub mod damage;
 pub mod fov;
 
@@ -28,28 +31,20 @@ impl<'a, T: Component> System<'a> for AssertUnique<T> {
 
 pub struct ExecuteCommands;
 
-impl ExecuteCommands {
-    fn add_hp_damage(dam_storage: &mut WriteStorage<HasEffectStack>, target: Entity, damage: i32) {
-        if let Some(d) = dam_storage.get_mut(target) {
-            d.hp_damage += damage;
-        } else {
-            dam_storage
-                .insert(target, HasEffectStack::hp(damage))
-                .unwrap();
-        }
-    }
-}
-
 impl<'a> System<'a> for ExecuteCommands {
     type SystemData = (
         Entities<'a>,
         WriteStorage<'a, HasPos>,
         WriteStorage<'a, PlansExecuting>,
         WriteStorage<'a, HasEffectStack>,
+        ReadStorage<'a, IsFighter>,
         Read<'a, LazyUpdate>,
     );
 
-    fn run(&mut self, (e, mut pos, mut plan_storage, mut dam_storage, lu): Self::SystemData) {
+    fn run(
+        &mut self,
+        (e, mut pos, mut plan_storage, mut dam_storage, fighter, lu): Self::SystemData,
+    ) {
         use specs::Join;
 
         for (e, pos, plan) in (&e, &mut pos, &mut plan_storage).join() {
@@ -60,7 +55,24 @@ impl<'a> System<'a> for ExecuteCommands {
                 }
                 ActorCommand::MeleeAttack { pos, target } => {
                     log::info!("Atacking {:?} at {:?}", target, pos);
-                    Self::add_hp_damage(&mut dam_storage, target, 1);
+                    let f = fighter.get(e).expect("ExecuteCommand::MeleeAttack");
+                    {
+                        {
+                            let stack: &mut HasEffectStack;
+                            if let Some(d) = dam_storage.get_mut(target) {
+                                stack = d;
+                            } else {
+                                dam_storage
+                                    .insert(target, HasEffectStack::default())
+                                    .expect("Unreachable");
+                                stack = dam_storage.get_mut(target).expect("Unreachable");
+                            }
+
+                            stack.add_damage(f);
+                        }
+                        //                        let effect = ExecuteCommands::init_effects_stack(dam_storage, target).expect("ExecuteCommand::MeleeAttack");
+                        //                        effect.add_damage(f);
+                    }
                 }
             }
             lu.remove::<PlansExecuting>(e);

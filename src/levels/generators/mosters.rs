@@ -16,6 +16,7 @@ impl Gen for MonsterTemplate {
     where
         G: Rng,
     {
-        *param.templates.choose(rng).unwrap()
+        // TODO - Can we live without excessive cloning?
+        param.templates.as_slice().choose(rng).unwrap().clone()
     }
 }

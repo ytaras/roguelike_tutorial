@@ -14,6 +14,10 @@ pub trait Validation<'a> {
         world.exec(|sd| self.run(i, sd))
     }
 
+    fn register(world: &mut World) {
+        <Self::SD as SystemData>::setup(&mut world.res);
+    }
+
     fn cons<V2>(&'a self, other: &'a V2) -> ConsV<Self, V2>
     where
         V2: Validation<'a, Input = Self::Output>,

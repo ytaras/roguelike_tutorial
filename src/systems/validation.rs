@@ -15,7 +15,7 @@ impl<'a> Validation<'a> for MoveValidation {
     type SD = (
         ReadStorage<'a, HasPos>,
         ReadStorage<'a, IsPlayer>,
-        ReadStorage<'a, TakesWholeTile>,
+        ReadStorage<'a, IsFighter>,
         Entities<'a>,
         Read<'a, LevelInfo>,
     );
@@ -51,6 +51,7 @@ mod tests {
     use crate::data::structures::{E, S};
 
     use super::*;
+    use crate::levels::races::orc_race;
 
     fn create_world(add_wall: bool) -> World {
         let mut w = World::new();
@@ -61,13 +62,13 @@ mod tests {
             level[Pos { x: 0, y: 1 }] = Wall;
         }
         w.add_resource(level);
-        w.register::<IsPlayer>();
+        w.register::<HasVision>();
         w.register::<IsVisible>();
-        w.register::<TakesWholeTile>();
-        w.register::<HasPos>();
+        w.register::<HasBrain>();
+        MoveValidation::register(&mut w);
         w.create_entity()
-            .with(IsPlayer)
-            .with(HasPos(Pos { x: 0, y: 0 }))
+            .is_player()
+            .with_actor_components('@', YELLOW, Pos { x: 0, y: 0 })
             .build();
         w
     }
@@ -92,7 +93,7 @@ mod tests {
         let target_pos = Pos { x: 0, y: 1 };
         let e = w
             .create_entity()
-            .with_actor_components('@', YELLOW, target_pos)
+            .is_monster(&orc_race().to_template(), target_pos)
             .build();
         let result = MoveValidation.exec(S, &mut w).unwrap();
 
