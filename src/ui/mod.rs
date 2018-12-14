@@ -60,7 +60,7 @@ impl GameCommandHandler {
         res.register::<IsPlayer>();
     }
 
-    // FIXME - Use validation framework for everyone here
+    // FIXME(26) - Use validation framework for everyone here
     pub fn exec(&self, gc: &Command, world: &mut World) {
         match gc {
             Command::GameCommand(GameCommand::Exit) => {
@@ -69,7 +69,7 @@ impl GameCommandHandler {
             }
             Command::PlayerCommand(ac) => {
                 use specs::RunNow;
-                // TODO Extract command handling from UI layer
+                // TODO(#26) Extract command handling from UI layer
                 let mut system: AssertUnique<IsPlayer> = Default::default();
                 system.run_now(&world.res);
 
@@ -77,7 +77,7 @@ impl GameCommandHandler {
                     ActorCommand::MeleeAttack { .. } => unreachable!(),
                     ActorCommand::Move(dir) => {
                         if let Some(res) = MoveValidation::default().exec(*dir, world) {
-                            // TODO Extract exec to system or provide helper methods - to decide
+                            // TODO(#26) Extract exec to system or provide helper methods - to decide
                             let (e, ispl, mut pl): (
                                 Entities,
                                 ReadStorage<IsPlayer>,

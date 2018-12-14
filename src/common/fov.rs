@@ -35,7 +35,7 @@ where
     C: CellObject,
     M: Index<Pos, Output = C> + HasDim,
 {
-    // TODO - There's a possibility to have smaller memory pressure to calculate fov only
+    // TODO(#24) - There's a possibility to have smaller memory pressure to calculate fov only
     // for what's in radius
     let mut fov_map = into_fov_map(m);
     fov_map.compute_fov(

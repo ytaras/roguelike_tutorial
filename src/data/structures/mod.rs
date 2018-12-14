@@ -47,7 +47,6 @@ impl Command {
     }
 }
 
-// TODO - Better syntax
 pub const N: Dir = Dir {
     ns: MoveDir::Minus,
     ew: MoveDir::Zero,
