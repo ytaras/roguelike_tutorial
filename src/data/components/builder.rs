@@ -39,7 +39,7 @@ impl<'a> RichEntityBuilder for EntityBuilder<'a> {
     }
 
     fn with_ai(self) -> Self {
-        self.with(HasBrain {})
+        self.with(HasBrain::bored())
     }
 
     fn with_fighter(self, f: IsFighter) -> Self {

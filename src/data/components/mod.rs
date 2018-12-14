@@ -7,7 +7,15 @@ use crate::systems::render::Color;
 use super::structures::*;
 
 pub use self::builder::*;
+use crate::common::ai::AiGoal;
+use crate::common::ai::Goal;
+use crate::common::ai::Goals;
 use std::cmp::max;
+use std::collections::LinkedList;
+use std::sync::atomic::AtomicPtr;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::sync::RwLock;
 
 mod builder;
 
@@ -102,7 +110,17 @@ impl HasVision {
 }
 
 #[derive(Component)]
-pub struct HasBrain {}
+pub struct HasBrain {
+    goal: Goals,
+}
+
+impl HasBrain {
+    pub fn bored() -> Self {
+        HasBrain {
+            goal: Goals::bored(),
+        }
+    }
+}
 
 #[derive(Component, Clone, Debug)]
 pub struct IsFighter {
