@@ -1,15 +1,14 @@
+use std::ops::Range;
+
+use itertools::free::any;
+use log::trace;
+use rand::Rng;
+
 use crate::common::gen::Gen;
 use crate::data::structures::pos::PosCollection;
 use crate::data::structures::world_data::MonsterTemplate;
 use crate::data::structures::*;
 use crate::levels::generators::mosters::MonsterGeneratorParam;
-use itertools::free::any;
-use itertools::Itertools;
-use log::{trace, warn};
-use rand::seq::IteratorRandom;
-use rand::Rng;
-use std::collections::HashSet;
-use std::ops::Range;
 
 pub mod mosters;
 
@@ -121,14 +120,17 @@ impl Gen for Level {
 
 #[cfg(test)]
 mod test {
-    use super::*;
-    use crate::data::structures::pos::test::*;
-    use crate::levels::races::ALL_MONSTERS;
+    use std::cmp::max;
+    use std::cmp::min;
+
     use itertools::iproduct;
     use proptest::prelude::*;
     use proptest::{prop_assert, proptest, proptest_helper};
-    use std::cmp::max;
-    use std::cmp::min;
+
+    use crate::data::structures::pos::test::*;
+    use crate::levels::races::all_monsters;
+
+    use super::*;
 
     fn room_gen_strategy() -> BoxedStrategy<RoomGenStrategy> {
         (nonzero_pos_in_dim(MAX_DIM), nonzero_pos_in_dim(MAX_DIM))
@@ -177,7 +179,7 @@ mod test {
             max_rooms: max_rooms as usize,
             monsters: 20..30,
             monster_strategy: MonsterGeneratorParam {
-                templates: ALL_MONSTERS(),
+                templates: all_monsters(),
             },
         })
     }

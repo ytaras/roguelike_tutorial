@@ -4,13 +4,12 @@ extern crate specs;
 
 use doryen_rs::{App, AppOptions};
 use specs::prelude::*;
+use tcod::colors::RED;
 
 use rogue_tutorial::compatibility::doryen::*;
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
 use rogue_tutorial::levels::level_1;
-use rogue_tutorial::systems::render::*;
-use tcod::colors::RED;
 
 const CONSOLE_DIM: Dim = Dim {
     width: 90,

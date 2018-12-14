@@ -1,11 +1,8 @@
-use crate::common::gen::Gen;
-use crate::data::structures::pos::PosCollection;
-use crate::data::structures::world_data::MonsterTemplate;
-use crate::data::structures::*;
 use rand::seq::SliceRandom;
 use rand::Rng;
-use std::collections::HashMap;
-use std::prelude::v1::Vec;
+
+use crate::common::gen::Gen;
+use crate::data::structures::world_data::MonsterTemplate;
 
 #[derive(Debug, Clone)]
 pub struct MonsterGeneratorParam {

@@ -1,11 +1,12 @@
 use specs::prelude::*;
 use specs_derive::*;
 
+use crate::data::structures::matrix::Matrix;
+use crate::systems::render::Color;
+
 use super::structures::*;
 
 pub use self::builder::*;
-use crate::data::structures::matrix::Matrix;
-use crate::systems::render::Color;
 
 mod builder;
 
@@ -58,13 +59,13 @@ pub struct HasVision {
 }
 
 #[derive(Component, Default)]
-pub struct HasDamage {
+pub struct HasEffectStack {
     pub hp_damage: i32,
 }
 
-impl HasDamage {
+impl HasEffectStack {
     pub fn hp(hp_damage: i32) -> Self {
-        HasDamage { hp_damage }
+        HasEffectStack { hp_damage }
     }
 }
 
@@ -100,3 +101,6 @@ impl HasVision {
         self.memory.as_ref()
     }
 }
+
+#[derive(Component)]
+pub struct HasBrain {}

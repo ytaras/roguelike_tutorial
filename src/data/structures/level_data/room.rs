@@ -1,9 +1,10 @@
+use std::ops::RangeInclusive;
+
 use crate::data::structures::level_data::HasWall;
 use crate::data::structures::pos::PosCollection;
 use crate::data::structures::Dim;
 use crate::data::structures::DimIndex;
 use crate::data::structures::Pos;
-use std::ops::RangeInclusive;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Room {
@@ -99,13 +100,16 @@ impl Room {
 
 #[cfg(test)]
 pub mod test {
-    use super::*;
-    use crate::data::structures::dim::test::*;
-    use crate::data::structures::pos::test::*;
-    use itertools::{any, iproduct};
+    use std::collections::HashSet;
+
+    use itertools::any;
     use proptest::prelude::*;
     use proptest::{prop_assert, prop_assert_eq, prop_assert_ne, proptest, proptest_helper};
-    use std::collections::HashSet;
+
+    use crate::data::structures::dim::test::*;
+    use crate::data::structures::pos::test::*;
+
+    use super::*;
 
     pub fn room_in(level_dim: Dim) -> BoxedStrategy<Room> {
         println!("{:?}", level_dim);

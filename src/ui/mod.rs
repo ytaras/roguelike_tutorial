@@ -4,12 +4,10 @@ use crate::common::validations::Validation;
 use crate::data::components::*;
 use crate::data::structures::*;
 use crate::systems::logic::*;
+use crate::systems::render::Renderer;
 use crate::systems::validation::MoveValidation;
 
 use self::keymapper::*;
-use crate::systems::render::RenderWrapper;
-use crate::systems::render::Renderer;
-use std::marker::PhantomData;
 
 mod keymapper;
 
@@ -26,7 +24,8 @@ impl<'a, 'b> Game<'a, 'b> {
         let game_command_handler = GameCommandHandler;
 
         let mut tick_dispatcher = DispatcherBuilder::new()
-            .with(ExecuteCommands, "execute_commands", &[])
+            .with(GetAiCommand, "ai_decide", &[])
+            .with(ExecuteCommands, "execute_commands", &["ai_decide"])
             .with(Fov::default(), "fov", &[])
             .with(ExecuteDamage, "execute_damage", &["execute_commands"])
             .build();

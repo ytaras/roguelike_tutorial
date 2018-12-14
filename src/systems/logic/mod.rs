@@ -5,10 +5,13 @@ use specs::prelude::*;
 use crate::data::components::*;
 use crate::data::structures::*;
 
-pub mod fov;
-pub use self::fov::*;
-pub mod damage;
+pub use self::ai::*;
 pub use self::damage::*;
+pub use self::fov::*;
+
+pub mod ai;
+pub mod damage;
+pub mod fov;
 
 #[derive(Default)]
 pub struct AssertUnique<T: Component> {
@@ -26,11 +29,13 @@ impl<'a, T: Component> System<'a> for AssertUnique<T> {
 pub struct ExecuteCommands;
 
 impl ExecuteCommands {
-    fn add_hp_damage(dam_storage: &mut WriteStorage<HasDamage>, target: Entity, damage: i32) {
+    fn add_hp_damage(dam_storage: &mut WriteStorage<HasEffectStack>, target: Entity, damage: i32) {
         if let Some(d) = dam_storage.get_mut(target) {
             d.hp_damage += damage;
         } else {
-            dam_storage.insert(target, HasDamage::hp(damage)).unwrap();
+            dam_storage
+                .insert(target, HasEffectStack::hp(damage))
+                .unwrap();
         }
     }
 }
@@ -40,7 +45,7 @@ impl<'a> System<'a> for ExecuteCommands {
         Entities<'a>,
         WriteStorage<'a, HasPos>,
         WriteStorage<'a, PlansExecuting>,
-        WriteStorage<'a, HasDamage>,
+        WriteStorage<'a, HasEffectStack>,
         Read<'a, LazyUpdate>,
     );
 

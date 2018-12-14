@@ -1,19 +1,19 @@
-extern crate tcod;
 #[macro_use]
 extern crate log;
 extern crate pretty_env_logger;
 extern crate rogue_tutorial;
 extern crate specs;
+extern crate tcod;
+
+use specs::{Builder, System, World};
+use tcod::colors::RED;
+use tcod::*;
 
 use rogue_tutorial::data::components::*;
 use rogue_tutorial::data::structures::*;
 use rogue_tutorial::levels::level_1;
 use rogue_tutorial::systems::render::Renderer;
-use rogue_tutorial::systems::render::*;
 use rogue_tutorial::ui::Game;
-use specs::{Builder, EntityBuilder, System, World};
-use tcod::colors::RED;
-use tcod::*;
 
 const CONSOLE_DIM: Dim = Dim {
     width: 90,

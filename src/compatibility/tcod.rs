@@ -1,8 +1,7 @@
-use crate::data::structures::Pos;
-use crate::systems::render::Color;
-use crate::systems::render::{Renderable, Renderer};
-use tcod::colors::YELLOW;
 use tcod::BackgroundFlag;
+
+use crate::data::structures::Pos;
+use crate::systems::render::{Renderable, Renderer};
 
 impl<'a, C: ::tcod::Console> Renderer for C {
     fn render<T>(&mut self, pos: Pos, r: &T, in_fov: bool)

@@ -1,19 +1,19 @@
+use rand::Rng;
+
 use crate::common::gen::Gen;
 use crate::data::structures::matrix::*;
 use crate::data::structures::*;
-use log::*;
-use rand::Rng;
-
-pub mod functions;
-pub mod generators;
-pub mod races;
-
-pub use self::functions::*;
 use crate::levels::generators::mosters::MonsterGeneratorParam;
 use crate::levels::generators::Level;
 use crate::levels::generators::LevelGenStrategy;
 use crate::levels::generators::RoomGenStrategy;
-use crate::levels::races::ALL_MONSTERS;
+use crate::levels::races::all_monsters;
+
+pub use self::functions::*;
+
+pub mod functions;
+pub mod generators;
+pub mod races;
 
 const MAP_DIM: Dim = Dim {
     width: 90,
@@ -41,7 +41,7 @@ where
         max_rooms: 30,
         monsters: 20..30,
         monster_strategy: MonsterGeneratorParam {
-            templates: ALL_MONSTERS(),
+            templates: all_monsters(),
         },
     };
 
