@@ -27,7 +27,8 @@ impl<'a, 'b> Game<'a, 'b> {
             .with(GetAiCommand, "ai_decide", &[])
             .with(ExecuteCommands, "execute_commands", &["ai_decide"])
             .with(Fov::default(), "fov", &[])
-            .with(ExecuteDamage, "execute_damage", &["execute_commands"])
+            .with(ExecuteEffects, "execute_damage", &["execute_commands"])
+            .with(Clean, "remove_dead", &["execute_damage"])
             .build();
 
         tick_dispatcher.setup(&mut world.res);
@@ -57,7 +58,6 @@ pub struct GameCommandHandler;
 impl GameCommandHandler {
     pub fn setup(&self, res: &mut World) {
         res.register::<IsPlayer>();
-        res.register::<TakesWholeTile>();
     }
 
     // FIXME - Use validation framework for everyone here

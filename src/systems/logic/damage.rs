@@ -1,24 +1,25 @@
 use specs::prelude::*;
 
-use crate::data::components::HasEffectStack;
+use crate::data::components::*;
 
-pub struct ExecuteDamage;
+pub struct ExecuteEffects;
 
-impl<'a> System<'a> for ExecuteDamage {
+impl<'a> System<'a> for ExecuteEffects {
     type SystemData = (
         Entities<'a>,
         ReadStorage<'a, HasEffectStack>,
+        WriteStorage<'a, IsFighter>,
         Read<'a, LazyUpdate>,
     );
 
-    fn run(&mut self, (ent, dam, lazy): <Self as System<'a>>::SystemData) {
+    fn run(&mut self, (ent, dam, mut hp, lazy): <Self as System<'a>>::SystemData) {
         use specs::Join;
 
-        for (e, _) in (&ent, &dam).join() {
-            log::info!("Removing {:?}", e);
-            lazy.exec_mut(move |world| {
-                world.delete_entity(e).unwrap();
-            });
+        for (e, hp, dam) in (&ent, &mut hp, &dam).join() {
+            log::info!("Dealing {:?} to {:?}", dam, hp);
+            hp.inflict_damage(dam.attack_power);
+            log::trace!("Result: {:?}", hp);
+            lazy.remove::<HasEffectStack>(e);
         }
     }
 }
