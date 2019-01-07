@@ -20,7 +20,7 @@ shred="0.7.1"
 tcod = { git = "https://github.com/rjungemann/tcod-rs.git", branch = "fix-sdl2-rendering-mojave" }
 log = "0.4.6"
 pretty_env_logger = "0.3.0"
-rand = "0.6.1"
+rand = "0.6.3"
 
 [dev-dependencies]
 proptest="0.8.7"
