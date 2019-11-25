@@ -11,7 +11,7 @@ render_doryen = ["doryen-rs"]
 nightly = ["specs/nightly"]
 
 [dependencies]
-doryen-rs= {version ="0.1.0", optional = true}
+doryen-rs= {version ="1.2.0", optional = true}
 specs="0.14.3"
 specs-derive="0.4.0"
 itertools="0.8.0"
